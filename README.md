@@ -10,5 +10,6 @@ This is the repository for Brooklyn's Diamond Reef Explorer's autonomous underwa
 3. 'vagrant up' (this might take a few)
 4. 'vagrant ssh'
 5. '/vagrant/base-install.sh'
-6. More to come...
+6. source ~/.bashrc 
+7. More to come...
 
