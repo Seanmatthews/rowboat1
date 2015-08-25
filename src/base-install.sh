@@ -15,7 +15,6 @@ sudo apt-get install ros-jade-desktop-full
 sudo rosdep init
 rosdep update
 echo "source /opt/ros/jade/setup.bash" >> ~/.bashrc
-source ~/.bashrc
 sudo apt-get -y install python-rosinstall
 
 exit
