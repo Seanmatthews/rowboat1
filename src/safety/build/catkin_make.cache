@@ -1,0 +1,2 @@
+guardian
+-DCATKIN_DEVEL_PREFIX=/vagrant/safety/devel -DCMAKE_INSTALL_PREFIX=/vagrant/safety/install -G Unix Makefiles

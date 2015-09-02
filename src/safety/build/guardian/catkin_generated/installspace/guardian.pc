@@ -1,0 +1,8 @@
+prefix=/vagrant/safety/install
+
+Name: guardian
+Description: Description of guardian
+Version: 0.0.0
+Cflags: 
+Libs: -L/vagrant/safety/install/lib 
+Requires: 

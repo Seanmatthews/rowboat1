@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "guardian")
+set(guardian_MAINTAINER "vagrant <vagrant@todo.todo>")
+set(guardian_DEPRECATED "")
+set(guardian_VERSION "0.0.0")
+set(guardian_BUILD_DEPENDS "roscpp" "std_msgs")
+set(guardian_RUN_DEPENDS "roscpp" "std_msgs")
+set(guardian_BUILDTOOL_DEPENDS "catkin")
