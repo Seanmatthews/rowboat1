@@ -84,6 +84,7 @@ Hardware
 - 1x cell transceiver w/gps
 - 1x mini pc104 stack
 - 2x raspberry pi (one to handle low-level and high-level navigation, the other for high-update sensors)
+- 1x IMU
 
 Primary SBC Required I/O
 - eth
@@ -93,3 +94,21 @@ Primary SBC Required I/O
 - 8x GPIO for sonar
 - 1 GPIO per tactile (let’s say ~8)
 - 4x GPIO for moisture sensor
+
+=====
+
+-          Add board-specific install script to each board—the script installs package requirements, checks out tagged version of code, and builds code.
+-          Add board-specific startup script to each board—the script starts all on-board software
+-          Safety board maintains a node monitor
+-          Safety monitor has the ability to force kill any other node—if it detects a problem, for example, it should be able to kill high-level behaviors and/or thruster control
+-           Safety monitor & control has top priority in the system
+-          Ambient temperature sensor to GPIO?
+-   https://www.sparkfun.com/products/245
+-   https://www.sparkfun.com/products/10988
+-   https://www.sparkfun.com/products/11050
+-          Moisture sensor to GPIO?
+-   http://www.mouser.com/ProductDetail/Gravitech/I2C-HUTMP/?qs=sGAEpiMZZMvoGNntvmgYkHmFdY5RRUxdKjQNVG4q%2fToFUGWtRTp2ug%3d%3d
+-          Polycarbonate fabrication: http://custom-division.com/
+-          Divers
+-   http://www.oasisnyc.net/stewardship/organizationdetails.aspx?id=1529
+-   Urbandivers.org
