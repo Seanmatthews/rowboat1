@@ -112,3 +112,10 @@ Primary SBC Required I/O
 -          Divers
 -   http://www.oasisnyc.net/stewardship/organizationdetails.aspx?id=1529
 -   Urbandivers.org
+
+=====
+
+Early testing
+If I can manage any of this, here are some early tests that don’t include some of the more difficult-to-design equipment.
+
+- Thrusters on metal frame with imu and computer in watertight case with ethernet port, suspended in the center of the metal frame. Put this in a clear vat of water and try to make the auv suspend itself.
