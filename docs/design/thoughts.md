@@ -119,3 +119,14 @@ Early testing
 If I can manage any of this, here are some early tests that don’t include some of the more difficult-to-design equipment.
 
 - Thrusters on metal frame with imu and computer in watertight case with ethernet port, suspended in the center of the metal frame. Put this in a clear vat of water and try to make the auv suspend itself.
+
+=====
+
+Thrusters
+Blue Robotics will be the provider for Rowboat1's thrusters, primarily because they're afforidable and extremely responsive. They have two models, the T100 and T200. T100 offers a maximum 2.36kgf/1.82kgf forward/backward, while T200 offers 5.1kgf/4.1kgf forward/backward.
+
+The rest of these are educated estiamtes...
+
+I estimate the weight of the vehicle to be a maximum of ~13.61kg (~30lbs). From various sources on the internet, none of the various currents in the Hudson River, outside of storm conditions, should travel faster than 3 knots (~1.54m/s).
+
+The max backward thrust on the T100 amounts to ~17.85 newtons. So if the T100 can accelerate 17.85kg to 1m/s2, then it should be able to accelerate 13.61kg to 1.31m/s2. Someone check my math. When we have a negative velocity with a positive acceleration, the AUV will come to a resting position, but not instantaneously against a 3 knot current. This is not acceptable. The obvious answer is to turn the AUV around and use the higher, forward kgf. The same calculation— ~23.14 newtons, which would accelerate a 30lb AUV to 1.7m/s2.
