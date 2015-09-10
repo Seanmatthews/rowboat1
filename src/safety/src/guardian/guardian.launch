@@ -1,0 +1,5 @@
+<launch>
+  <group name="guardian">
+    <rosparam file="$(find guardian)/guarded-nodes.yaml">  
+  </group>
+</launch>
