@@ -22,7 +22,8 @@ namespace rowboat1
 
         ros::NodeHandle n_;
         ros::Subscriber sub_;
-
+		ros::Rate loopRate_;
+		
 		std::map<std::string,std::map<int,std::string> > heartbeatAlerts_;
     }
 } // end namespace rowboat1
