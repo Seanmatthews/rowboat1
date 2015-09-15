@@ -1,5 +1,4 @@
 <launch>
-  <group name="guardian">
-    <rosparam file="$(find guardian)/guarded-nodes.yaml">  
-  </group>
+<launch>
+  <node name="guardian" pkg="guardian" type="guardian" respawn="true" />
 </launch>
