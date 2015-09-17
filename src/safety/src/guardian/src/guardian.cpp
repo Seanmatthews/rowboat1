@@ -1,10 +1,13 @@
 #include "guardian.h"
+#include <iostream>
+#include <sstream>
+#include <string>
 
 namespace rowboat1 {	
 
 	Guardian::Guardian(ros::NodeHandle nh)
 	{
-		ROS_INFO( "Starting Guardian.");
+		ROS_INFO("Starting Guardian.");
 	}
 
 	Guardian::~Guardian()
@@ -17,8 +20,9 @@ namespace rowboat1 {
 	 */
 	bool Guardian::init()
 	{
-		heartbeatSubs = new std::vector<std::string>();
-		heartbeatAlerts = new std::map<std::string,std::map<int,std::string> >();
+		heartbeatSubs_ = new std::vector<std::string>();
+		statusSubs_ = new std::vector<std::string>();
+		heartbeatAlerts_ = new std::map<std::string,std::map<int,std::string> >();
 		
 		// Print list of params for node to debug
 		XmlRpc::XmlRpcValue paramSpace
@@ -36,31 +40,32 @@ namespace rowboat1 {
 		{
 			ROS_WARN_STREAM("Setting guardedNodes_ to default value " << guardedNodes_);
 		}
-		if (!nh_.param<int>("/guardian/heartbeatBufferMax ", heartbeatBufferMax_, 50))
+		if (!nh_.param<int>("/guardian/heartbeatBufferMax", heartbeatBufferMax_, 50))
 		{
 			ROS_WARN_STREAM("Setting heartbeatBufferMax_ to default value " << heartbeatBufferMax_):
 		}
-		
+		if (!nh_.param<int>("/guardian/statusBufferMax", statusBufferMax_, 20))
+		{
+			ROS_WARN_STREAM("Setting statusBufferMax_ to default value " << statusBufferMax_);
+		}
+	
 		return true;
 	}
 
 	/**
 	 * Load heartbeat topics from a config file
 	 */
-	void Guardian::subscribeToHeartbeats()
+	void Guardian::subscribeToGuardedNodes()
 	{
 		for (std::vector<std::string>::iterator it = guardedNodes_.begin(); it != guardedNodes_.end(); ++it)
 		{
-			heartbeatSubs.push_back(nh_.subscribe(*it, heartbeatBufferMax_, Guardian::heartbeatCB));
+			std::ostringstream heartbeatTopic;
+			std::ostringstream statusTopic;
+			heartbeatTopic << *it << "/heartbeat";
+			statusTopic << *it << "/status";
+			heartbeatSubs.push_back(nh_.subscribe(heartbeatTopic, heartbeatBufferMax_, Guardian::heartbeatCB));
+			statusSubs.push_back(nh_.subscribe(statusTopic, statusBufferMax_, Guardian::statusCB));
 		}
-	}
-
-	/**
-	 *  Load statuses from a config file
-	 */
-	void Guardian::subscrubeToStatuses()
-	{
-	
 	}
 
 	/**
@@ -68,9 +73,28 @@ namespace rowboat1 {
 	 */
 	void Guardian::heartbeatsCB()
 	{
+		
+	}
+
+	/**
+	 *  Called when statuses come in from observed nodes.
+	 */
+	void Guardian::statusCB()
+	{
 
 	}
 
+	/**
+	 *  Attempt to restart a node in the case of failure
+	 */
+	void Guardian::resetNode(std::string topic)
+	{
+
+	}
+
+	/**
+	 *  Check heartbeats and statuses, act accordingly.
+	 */
 	void Guardian::mainLoop()
 	{
 		while (ros::ok)
