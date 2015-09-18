@@ -16,9 +16,10 @@ namespace rowboat1
         ~Guardian();
     
     private:
+		using HeartbeatAlertMap = std::map<std::string,std::vector<long> >; // HeartbeatAlertMap;
+		
         void subscribeToGuardedNodes();
 		void heartbeatsCB();
-		void statusCB();
 		void resetNode(std::string topic);
 
         ros::NodeHandle nh_;
@@ -26,11 +27,9 @@ namespace rowboat1
 		ros::Rate loopRate_;
 
 		int heartbeatBufferMax_;
-		int statusBufferMax_;
 		std::vector<ros::Subscriber> heartbeatSubs_;
-		std::vector<ros::Subscriber> statusSubs_;
 		std::vector<std::string> guardedNodes_;
-		std::map<std::string,std::map<int,std::string> > heartbeatAlerts_;
+	    HeartbeatAlertMap heartbeatAlerts_;
     }
 } // end namespace rowboat1
 
