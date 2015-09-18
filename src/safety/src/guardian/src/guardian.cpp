@@ -44,10 +44,6 @@ namespace rowboat1 {
 		{
 			ROS_WARN_STREAM("Setting heartbeatBufferMax_ to default value " << heartbeatBufferMax_):
 		}
-		if (!nh_.param<int>("/guardian/statusBufferMax", statusBufferMax_, 20))
-		{
-			ROS_WARN_STREAM("Setting statusBufferMax_ to default value " << statusBufferMax_);
-		}
 	
 		return true;
 	}
@@ -71,17 +67,14 @@ namespace rowboat1 {
 	/**
 	 *  Called when heartbeats come in from observed nodes.
 	 */
-	void Guardian::heartbeatsCB()
+	void Guardian::heartbeatsCB(const guardian::hearbeat::ConstPtr& msg)
 	{
-		
-	}
-
-	/**
-	 *  Called when statuses come in from observed nodes.
-	 */
-	void Guardian::statusCB()
-	{
-
+		// Add the heartbeat to our list of heartbeats
+		std::vector<long> msgInfo = new std::vector<long>();
+		msgInfo.push_back(msg.seqNum);
+		msgInfo.push_back(msg.timestamp);
+		msgInfo.push_back(msg.status);
+		heartbeatAlerts_.insert(std::pair<msg.topic, msgInfo>);
 	}
 
 	/**
