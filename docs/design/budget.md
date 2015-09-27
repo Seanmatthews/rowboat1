@@ -4,7 +4,6 @@ This is really for my own personal edification, but I figured I’d post it for 
 ## Estimated Maximums
 - Temperature sensors, $25
 - Moisture sensors, $200
-- DVL, $2000?
 - Computers, $300
 - Digital storage, $100
 - Thrusters, $1000
@@ -12,7 +11,10 @@ This is really for my own personal edification, but I figured I’d post it for 
 - Ballast system, $200
 - Video camera, $1200
 - Still camera, $400
+- IMU, $2000
+- Acoustic positioning, $3000
 
 ## Costs to date
 - Computers, $226
 - Digital storage, $54
+- OpenROV IMU, $123
