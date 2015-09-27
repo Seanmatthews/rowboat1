@@ -130,3 +130,8 @@ The rest of these are educated estiamtes...
 I estimate the weight of the vehicle to be a maximum of ~13.61kg (~30lbs). From various sources on the internet, none of the various currents in the Hudson River, outside of storm conditions, should travel faster than 3 knots (~1.54m/s).
 
 The max backward thrust on the T100 amounts to ~17.85 newtons. So if the T100 can accelerate 17.85kg to 1m/s2, then it should be able to accelerate 13.61kg to 1.31m/s2. Someone check my math. When we have a negative velocity with a positive acceleration, the AUV will come to a resting position, but not instantaneously against a 3 knot current. This is not acceptable. The obvious answer is to turn the AUV around and use the higher, forward kgf. The same calculation— ~23.14 newtons, which would accelerate a 30lb AUV to 1.7m/s2.
+
+=====
+- Rhino3D for CAD
+- http://servo.texterity.com/servo/201510/?folio=40&pg=NaN#pgNaN
+- Check here for OpenROV software + electrical design: https://github.com/OpenROV
