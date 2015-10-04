@@ -19,4 +19,7 @@ rosdep update
 echo "source /opt/ros/jade/setup.bash" >> ~/.bashrc
 sudo apt-get -y install python-rosinstall
 
+# External libs
+git clone git://git.drogon.net/wiringPi external/wiringPi
+
 exit
