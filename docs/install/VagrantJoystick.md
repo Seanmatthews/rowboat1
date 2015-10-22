@@ -2,6 +2,8 @@
 
 By default, vagrant does not enable USB controllers. In fact, by default, there is no way to ask vagrant to enable USB controllers. By enabling USB controllers and installing a few drivers, we can read the output of a joystick, which is connected to the host computer, from inside the virtual machine.
 
+This installation is not intended for any of the AUV computers, but rather on an external computer designated for sub teleoperation. While teleoperation does not constitute the primary use of an AUV, it is used extensively during testing.
+
 NOTA BENE: These instructions assume you’re using OS X, VirtualBox, and an Xbox360 USB controller.
 
 ## 1. Install VirtualBox and VirtualBox Extension Pack
