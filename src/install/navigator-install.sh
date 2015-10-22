@@ -6,4 +6,5 @@ sudo echo "am1_i2c" >> /etc/modules
 # Add odroid user to i2c group so we don't need route for i2c access
 sudo adduser odroid i2c
 
-sudo reboot
+# THIS DOES NOT DO WELL TO VAGRANT
+# sudo reboot 
