@@ -43,7 +43,9 @@ Save the file, then `vagrant reload`. When it’s finished, `vagrant ssh` into t
 * Add contents:
 ```
 start on filesystem
-exec xboxdrv -D
-expect fork
+pre-start script
+    rm -f /dev/input/js*
+end script
+exec xboxdrv -D --detach-kernel-driver --silent --dbus disabled
 ```
-* `echo “joydev” | sudo tee —-append /etc/modules’
+* `echo “joydev” | sudo tee —-append /etc/modules`
