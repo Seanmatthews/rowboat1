@@ -6,5 +6,9 @@ sudo echo "am1_i2c" >> /etc/modules
 # Add odroid user to i2c group so we don't need route for i2c access
 sudo adduser odroid i2c
 
-# THIS DOES NOT DO WELL TO VAGRANT
-# sudo reboot 
+# ROS packages
+sudo apt-get -y install ros-jade-razor_imu_9dof
+
+# Post-install instructions
+echo "REBOOT THE MACHINE!"
+echo "IF IN VM, EXIT VM AND `vagrant reload --no-privision`
