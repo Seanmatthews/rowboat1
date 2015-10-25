@@ -1,4 +1,0 @@
-# Progress Notes
-
-## 27Sep15
-Purchased an OpenROV IMU with which to experiment. The IMU has decent specs in the low-to-mid range (~$100-$200), and I’m attracted to the fact that it’s already used in underwater ROV applications. The IMU has an I2C connection, which the Odroid C1+ supports, but the IMU does not come with a standard connection. While the IMU is open-sourced, the software interface is not documented. However, OpenROV keeps all their provided software here: https://github.com/OpenROV. Refer to this page for enabling I2C on the Odroid C1+: http://odroid.com/dokuwiki/doku.php?id=en:c1_hardware_i2c. Next, I plan to buy the thrusters from Blue Robotics, so that I can 1) write the software interface to them, and 2) test the magnetic noise they create for the IMU.
