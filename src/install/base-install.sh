@@ -20,9 +20,9 @@ echo "source /opt/ros/jade/setup.bash" >> ~/.bashrc
 sudo apt-get -y install python-rosinstall
 
 # External libs
-if [ ! -d external/wiringPi/.git ]
-then
-    git clone git://git.drogon.net/wiringPi /vagrant/external/wiringPi
-fi
+#if [ ! -d external/wiringPi/.git ]
+#then
+#    git clone git://git.drogon.net/wiringPi /vagrant/external/wiringPi
+#fi
 
 exit
