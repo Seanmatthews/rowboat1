@@ -11,17 +11,17 @@ namespace navigator
     {
       public:
 
-        static CommsInterface* createCommsInterface( const std::string& portName, unsigned int baudRate, std::string* error=NULL);
+        //static CommsInterface* createCommsInterface( const std::string& portName, unsigned int baudRate, std::string* error=NULL);
         virtual ~CommsInterface();
 
         virtual bool connectionOpen() const=0;
         static unsigned short getMinChannelValue() { return minChannelValue_; } 
-        static unsigned short getMaxChannelValue() { return macChannelValue_; }
+        static unsigned short getMaxChannelValue() { return maxChannelValue_; }
         
         bool setTarget(unsigned char channelNumber, unsigned short target);
         bool setTargetMiniSCC(unsigned char channelNumber, unsigned char normalizedTarget);
         bool setMaxSpeed(unsigned char channelNumber, unsigned short speed);
-        bool setMaxAcceleration(unsigned char channelNumber, unsigned char acceleration);
+        bool setMaxAcceleration(unsigned char channelNumber, unsigned short acceleration);
 
         bool getPosition(unsigned char channelNumber, unsigned short& position);
         bool getMovingState(unsigned char channelNumber, bool& servosMoving);
@@ -34,7 +34,7 @@ namespace navigator
         
       private:
 
-        enum Commands : unsigned char
+        enum Commands
         {
             COMMAND_SET_TARGET = 0x84, // 3 data bytes
             COMMAND_SET_SPEED = 0x87, // 3 data bytes
@@ -54,7 +54,7 @@ namespace navigator
         static const unsigned short minChannelValue_ = 3968;
         static const unsigned short maxChannelValue_ = 8000;
         virtual bool writeBytes(const unsigned char* data, unsigned int numBytes) = 0;
-        virtual bool readBytes(unsigned char& data, unsigned int numBytes) = 0;
+        virtual bool readBytes(unsigned char* data, unsigned int numBytes) = 0;
 
         std::string errorMessage_;
     };
