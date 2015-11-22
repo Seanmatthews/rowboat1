@@ -11,7 +11,11 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
+#find_package(PkgConfig REQUIRED)
+#find_package(libusb-1.0 REQUIRED)
+#pkg_check_modules(LIBUSB REQUIRED libusb-1.0)
+#include_directories(${LIBUSB_INCLUDE_DIRS})
+#link_directories(${LIBUSB_LIBRARY_DIRS})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -117,6 +121,9 @@ include_directories(
   include
 )
 
+#link_directories(/usr/local/lib)
+#link_libraries(usb)
+
 ## Declare a C++ library
 # add_library(pololu_maestro
 #   src/${PROJECT_NAME}/pololu_maestro.cpp
@@ -128,16 +135,17 @@ include_directories(
 # add_dependencies(pololu_maestro ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(pololu_maestro_node src/comms_interface.cpp src/main.cpp)
+add_executable(pololu_maestro_node src/maestro_comms_interface.cpp src/maestro_usb.cpp src/main.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(pololu_maestro_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(pololu_maestro_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(pololu_maestro_node
+   ${catkin_LIBRARIES}
+   usb-1.0
+)
 
 #############
 ## Install ##

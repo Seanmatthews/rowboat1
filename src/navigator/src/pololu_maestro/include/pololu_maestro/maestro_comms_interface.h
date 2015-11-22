@@ -7,12 +7,12 @@
 namespace navigator
 {
 
-    class CommsInterface
+    class MaestroCommsInterface
     {
       public:
 
         //static CommsInterface* createCommsInterface( const std::string& portName, unsigned int baudRate, std::string* error=NULL);
-        virtual ~CommsInterface();
+        virtual ~MaestroCommsInterface();
 
         virtual bool connectionOpen() const=0;
         static unsigned short getMinChannelValue() { return minChannelValue_; } 
@@ -30,7 +30,7 @@ namespace navigator
         bool goHome();
 
       protected:
-        CommsInterface();
+        MaestroCommsInterface();
         
       private:
 
