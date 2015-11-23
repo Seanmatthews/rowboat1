@@ -19,6 +19,13 @@ rosdep update
 echo "source /opt/ros/jade/setup.bash" >> ~/.bashrc
 sudo apt-get -y install python-rosinstall
 
+# Pololu
+sudo apt-get -y install libusb-1.0-0-dev
+# maybe not needed 
+sudo apt-get -y install mono-gmcs 
+sudo apt-get -y install mono-devel 
+sudo apt-get -y install libmono-winforms2.0-cil
+
 # External libs
 #if [ ! -d external/wiringPi/.git ]
 #then
