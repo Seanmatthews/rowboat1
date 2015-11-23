@@ -1,6 +1,8 @@
-#include "pololu_maestro/maestro_ros_layer.h"
-#include "std_msgs/Empty.h"
 #include "pololu_maestro/Info.h"
+#include "pololu_maestro/maestro_ros_layer.h"
+#include "pololu_maestro/maestro_usb.h"
+#include "std_msgs/Empty.h"
+
 
 namespace navigator {
 
@@ -15,12 +17,19 @@ namespace navigator {
     // Blocking function to be called from main to start the node
     void MaestroRosLayer::start()
     {
+        // Attempt to connect to a Maestro device
+        comms = new MaestroUsb();
+        if (!comms->connect())
+        {
+            ROS_ERROR_STREAM("Could not connect to a Maestro device");
+        }
+        
         // Init pubs, subs, and srvs
         infoPub_ = nh_.advertise<pololu_maestro::Info>("info", 0);
         heartbeatPub_ = nh_.advertise<std_msgs::Empty>("heartbeat", 0);
         killSub_ = nh_.subscribe("kill", 10, &MaestroRosLayer::killCB, this);
         controlAllSub_ = nh_.subscribe("controlAllPWM", 1000, &MaestroRosLayer::controlAllCB, this);
-
+        
         mainLoop();
     }
 
@@ -42,6 +51,8 @@ namespace navigator {
         
         while (ros::ok())
         {
+            
+            
             ros::spinOnce();
             loopRate.sleep();
         }

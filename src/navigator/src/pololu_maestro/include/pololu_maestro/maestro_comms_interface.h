@@ -15,6 +15,7 @@ namespace navigator
         virtual ~MaestroCommsInterface();
 
         virtual bool connectionOpen() const=0;
+        virtual bool connect()=0;
         static unsigned short getMinChannelValue() { return minChannelValue_; } 
         static unsigned short getMaxChannelValue() { return maxChannelValue_; }
         
@@ -53,7 +54,7 @@ namespace navigator
         static const unsigned short CLEAR = 0x7f;
         static const unsigned short minChannelValue_ = 3968;
         static const unsigned short maxChannelValue_ = 8000;
-        virtual bool writeBytes(const unsigned char* data, unsigned int numBytes) = 0;
+        virtual bool writeBytes(unsigned char requestType, unsigned char request, unsigned char* const data, unsigned int numBytes) = 0;
         virtual bool readBytes(unsigned char* data, unsigned int numBytes) = 0;
 
         std::string errorMessage_;

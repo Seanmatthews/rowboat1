@@ -5,6 +5,7 @@
 #include <vector>
 #include "std_msgs/String.h"
 #include "pololu_maestro/ControlPWMList.h"
+#include "pololu_maestro/maestro_comms_interface.h"
 
 namespace navigator 
 {
@@ -27,6 +28,7 @@ namespace navigator
         ros::Subscriber controlAllSub_;
         ros::Subscriber killSub_;
         unsigned short loopRateHz_;
+        MaestroCommsInterface* comms;
         
     };
     

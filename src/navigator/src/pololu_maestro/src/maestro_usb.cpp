@@ -6,10 +6,10 @@ namespace navigator
     MaestroUsb::MaestroUsb()
     {
         // Add all Maestros to product list
-        productList_.push_back(0x89);
-        productList_.push_back(0x8A);
-        productList_.push_back(0x8B);
-        productList_.push_back(0x8C);
+        productList_.push_back(0x89); // 6
+        productList_.push_back(0x8A); // 12
+        productList_.push_back(0x8B); // 18
+        productList_.push_back(0x8C); // 24
     }
 
     MaestroUsb::~MaestroUsb()
@@ -49,6 +49,12 @@ namespace navigator
         return false;
     }
 
+    bool MaestroUsb::writeBytes(unsigned char requestType, unsigned char request, unsigned char* const data, unsigned int numBytes)
+    {
+        int err = writeBytes(requestType, request, 0, 0, data, numBytes);
+        return isError(err);
+    }
+
     bool MaestroUsb::writeBytes(unsigned char requestType, unsigned char request, unsigned short value, unsigned short index)
     {
         int ret = writeBytes(requestType, request, value, index, (unsigned char*)0, (unsigned short)0);
@@ -58,14 +64,14 @@ namespace navigator
     // The function is not required by the interface, but serves to
     // interface the libusb transfer control function directly.
     bool MaestroUsb::writeBytes(unsigned char requestType, unsigned char request, unsigned short value,
-                                unsigned short index, unsigned char* data, unsigned short length)
+                                unsigned short index, unsigned char* const data, unsigned short length)
     {
         int err = libusb_control_transfer(deviceHandle_,
                                           requestType,
                                           request,
                                           value,
                                           index,
-                                          data,
+                                          (unsigned char*)data,
                                           length,
                                           (unsigned int)5000);
         return !isError(err);

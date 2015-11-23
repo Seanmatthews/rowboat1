@@ -23,7 +23,7 @@ namespace navigator
         bool writeBytes(unsigned char requestType, unsigned char request, unsigned short value, unsigned short index);
         bool writeBytes(unsigned char requestType, unsigned char request, unsigned short value,
                         unsigned short index, unsigned char* data, unsigned short length);
-        bool writeBytes(unsigned char request, const unsigned char* data, unsigned int numBytes);
+        bool writeBytes(unsigned char requestType, unsigned char request, unsigned char* const data, unsigned int numBytes);
         bool readBytes(unsigned char* data, unsigned int numBytes);
         bool findMaestro();
         bool claimDeviceInterfaces(libusb_device_handle* handle);
