@@ -3,7 +3,9 @@ First AUV design + implementation
 
 This is the repository for Brooklyn's Diamond Reef Explorer's autonomous underwater vehicle, Rowboat-1. The project is currently in its planning and design phase. If you'd like help out, no matter what your skills, join our meetup group at http://www.meetup.com/Tech-Tinkerers-NYC. 
 
-# Mac/Linux Setup
+# Dev Setup
+
+## Mac/Linux Setup
 0. Install VirtualBox from https://www.virtualbox.org/wiki/Downloads
 0. Install Vagrant from https://www.vagrantup.com
 2. Install Git from https://git-scm.com 
@@ -15,7 +17,7 @@ This is the repository for Brooklyn's Diamond Reef Explorer's autonomous underwa
 6. `source ~/.bashrc`
 7. If you’re new to ROS, follow the tutorials at http://wiki.ros.org/ROS/Tutorials
 
-# Windows Setup
+## Windows Setup 
 1. Install VirtualBox from https://www.virtualbox.org/wiki/Downloads
 2. Download Ubuntu 14.04 Desktop from http://www.ubuntu.com
 3. Create a new Linux 64-bit VM and follow the steps to install your downloaded Ubuntu image.
