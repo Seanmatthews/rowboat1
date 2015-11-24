@@ -4,9 +4,9 @@ ROWBOAT_INSTALL_DIR=/home/odroid/rowboat1/src
 # Install ROS packages
 
 # Make all local workspaces and add paths to workspace
-for ws in safety arbiter navigator common
+for ws in safety arbiter navigator
 do
-    catkin_make -C $ROWBAOT_INSTALL_DIR/$ws
+    catkin_make -C $ROWBOAT_INSTALL_DIR/$ws
     echo "source $ROWBOAT_INSTALL_DIR/$ws/devel/setup.bash" >> ~/.bashrc
 done
 
