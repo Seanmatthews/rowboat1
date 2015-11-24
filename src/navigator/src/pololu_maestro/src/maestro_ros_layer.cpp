@@ -1,8 +1,8 @@
-#include "pololu_maestro/Info.h"
 #include "pololu_maestro/maestro_ros_layer.h"
 #include "pololu_maestro/maestro_usb.h"
-#include "std_msgs/Empty.h"
 
+#include "std_msgs/Empty.h"
+#include "pololu_maestro/Info.h"
 
 namespace navigator {
 
