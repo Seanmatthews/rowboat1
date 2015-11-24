@@ -1,5 +1,5 @@
 # Change this for dev install
-ROWBOAT_INSTALL_DIR=/home/odroid
+ROWBOAT_INSTALL_DIR=/home/odroid/rowboat1/src
 
 # Install ROS packages
 
