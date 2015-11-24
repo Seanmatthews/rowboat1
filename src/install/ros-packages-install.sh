@@ -1,23 +1,14 @@
+# Change this for dev install
+ROWBOAT_INSTALL_DIR=/home/odroid
+
 # Install ROS packages
 
-# Make all local workspaces
-cd /vagrant/safety
-catkin_make
-cd /vagrant/arbiter
-catkin_make
-cd /vagrant/navigator
-catkin_make
-cd /vagrant/common
-catkin_make
-cd /vagrant/operator
-catkin_make
-
-# Add all workspaces to the path
-echo "source /vagrant/safety/devel/setup.bash" >> ~/.bashrc
-echo "source /vagrant/navigator/devel/setup.bash" >> ~/.bashrc
-echo "source /vagrant/arbiter/devel/setup.bash" >> ~/.bashrc
-echo "source /vagrant/common/devel/setup.bash" >> ~/.bashrc
-echo "source /vagrant/operator/devel/setup.bash" >> ~/.bashrc
+# Make all local workspaces and add paths to workspace
+for ws in safety arbiter navigator common
+do
+    catkin_make -C $ROWBAOT_INSTALL_DIR/$ws
+    echo "source $ROWBOAT_INSTALL_DIR/$ws/devel/setup.bash" >> ~/.bashrc
+done
 
 # Make sure the user can source the ROS workspaces
 # chmod -R 755 /vagrant/*
