@@ -23,6 +23,7 @@ namespace navigator {
         {
             ROS_ERROR_STREAM("Could not connect to a Maestro device");
         }
+	ROS_INFO_STREAM("Connected to a Maestro device!");
         
         // Init pubs, subs, and srvs
         infoPub_ = nh_.advertise<pololu_maestro::Info>("info", 0);

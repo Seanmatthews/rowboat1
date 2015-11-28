@@ -101,17 +101,17 @@ namespace navigator
     {
         for (std::vector<unsigned short>::iterator it = productList_.begin(); it != productList_.end(); it++)
         {
-            ROS_INFO_STREAM("Attempting to open maestro with vendorID:productID " << *it << ":" << PRODUCT_ID);
-            deviceHandle_ = libusb_open_device_with_vid_pid(context_, *it, PRODUCT_ID);
+            ROS_INFO_STREAM("Attempting to open maestro with vendorID:productID " << *it << ":" << VENDOR_ID);
+            deviceHandle_ = libusb_open_device_with_vid_pid(context_, VENDOR_ID, *it);
             if (deviceHandle_ != NULL)
             {
-                switch(PRODUCT_ID)
+                switch(*it)
                 {
                 case 0x89: servoCount_ = 6;
                 case 0x8A: servoCount_ = 12;
                 case 0x8B: servoCount_ = 18;
                 case 0x8C: servoCount_ = 24;
-                default: servoCount_ = 0;
+                default: servoCount_ = 6;
                 }
                 break;
             }

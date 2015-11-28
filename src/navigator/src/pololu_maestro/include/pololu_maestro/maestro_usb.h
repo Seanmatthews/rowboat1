@@ -16,7 +16,7 @@ namespace navigator
         bool connect();
         bool connectionOpen() const;
 
-        static const unsigned short PRODUCT_ID = 0x1ffb;
+        static const unsigned short VENDOR_ID = 0x1ffb;
             
       private:
         bool isError(int code);
