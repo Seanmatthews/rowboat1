@@ -33,7 +33,7 @@ namespace navigator
         libusb_set_debug(context_, 3);
 
         if (!findMaestro()) {
-            ROS_ERROR_STREAM("Could not find a Maestro device");
+            ROS_ERROR_STREAM("Could not find a Maestro device with device handle " << deviceHandle_);
             return false;
         }
 
