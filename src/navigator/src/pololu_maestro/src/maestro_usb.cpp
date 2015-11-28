@@ -101,6 +101,7 @@ namespace navigator
     {
         for (std::vector<unsigned short>::iterator it = productList_.begin(); it != productList_.end(); it++)
         {
+            ROS_INFO_STREAM("Attempting to open maestro with vendorID:productID " << *it << ":" << PRODUCT_ID);
             deviceHandle_ = libusb_open_device_with_vid_pid(context_, *it, PRODUCT_ID);
             if (deviceHandle_ != NULL)
             {
