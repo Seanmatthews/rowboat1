@@ -1,3 +1,4 @@
+#include <ros/ros.h>
 #include "pololu_maestro/maestro_usb.h"
 
 
@@ -23,18 +24,31 @@ namespace navigator
     bool MaestroUsb::connect()
     {
         int init = libusb_init(&context_);
-        if (init = LIBUSB_SUCCESS) return false;
+        if (init = LIBUSB_SUCCESS) {
+            ROS_ERROR_STREAM("Could not initialize a USB device");
+            return false;
+        }
 
         // Set suggested debug verbosity level
         libusb_set_debug(context_, 3);
 
-        if (!findMaestro()) return false;
+        if (!findMaestro()) {
+            ROS_ERROR_STREAM("Could not find a Maestro device");
+            return false;
+        }
 
         // Claim first interface of device
         int detach = libusb_detach_kernel_driver(deviceHandle_, 0);
-        if (detach != 0) return false;
+        if (detach != 0)
+        {
+            ROS_INFO_STREAM("Could not detach kernel driver");
+            return false;
+        }
         int claim = libusb_claim_interface(deviceHandle_, 0);
-        if (claim != 0) return false;
+        if (claim != 0) {
+            ROS_ERROR_STREAM("Could not claim interface " << deviceHandle_ );
+            return false;
+        }
         
         return true;
     }
