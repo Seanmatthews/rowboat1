@@ -1,5 +1,7 @@
-# rowboat1
-First AUV design + implementation
+rowboat1
+===
+
+[![Travis CI](https://travis-ci.org/ubergarm/rowboat1.svg)](https://travis-ci.org/ubergarm/rowboat1/)
 
 This is the repository for Brooklyn's Diamond Reef Explorer's autonomous underwater vehicle, Rowboat-1. The project is currently in its planning and design phase. If you'd like help out, no matter what your skills, join our meetup group at http://www.meetup.com/Tech-Tinkerers-NYC. 
 
@@ -26,3 +28,59 @@ This is the repository for Brooklyn's Diamond Reef Explorer's autonomous underwa
 6. From the rowboat1/src/install directory, run `./base-install.sh`
 7. `source ~/.bashrc`
 8. The ROS tutorials: http://wiki.ros.org/ROS/Tutorials
+
+ 
+CircleCI Docker Image Automation
+===
+
+This project contains files relevent to the automated building of armhf
+(armv7) compatible Docker images. These images can be used for dev,
+build, test, and deploy to ensure a consistent user experience.
+
+This solution combines:
+
+* Host kernel support for binfmt misc
+* qemu-arm-static
+* chroot
+* Docker armhf images
+* CircleCI
+
+## Quick Start
+
+To configure build automation and be able to run ARM Docker containers
+from an x86-64 system follow these steps or check out the reference
+found at the bottom.
+
+    sudo curl -o /usr/share/binfmts/qemu-arm http://ubergarm.com/dre/qemu-arm
+    sudo curl -o /usr/bin/qemu-arm-static http://ubergarm.com/dre/qemu-arm-static
+    sudo modprobe binfmt_misc
+    sudo apt-get install -y binfmt-support
+
+To test that the host is configured properly:
+
+    curl -O http://ubergarm.com/dre/hello_world-arm-static
+    chmod a+x hello_world-arm-static
+    ./hello_world-arm-static
+
+## Build ARM Docker Image 
+
+From top level project directory.
+
+    docker build -t ubergarm/rowboat1 .
+
+## Run ARM Docker Image
+
+   docker run --rm -it ubergarm/rowboat1
+
+## Update ubergarm base image
+
+Pull the latest base image and add the qemu-arm-static binary.
+
+    docker pull ioft/armhf-ubuntu:trusty
+    CID=$(docker create --name trusty ioft/armhf-ubuntu:trusty)
+    docker cp /usr/bin/qemu-arm-static $CID:/usr/bin/qemu-arm-static
+    docker commit $CID ubergarm/armhf-ubuntu:trusty
+    docker push ubergarm/armhf-ubuntu:trusty
+    
+## References
+[blog.ubergarm.com](http://blog.ubergarm.com/run-arm-docker-images-on-x86_64-hosts/)

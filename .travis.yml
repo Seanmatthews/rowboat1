@@ -1,0 +1,39 @@
+sudo: required
+
+services:
+  - docker
+
+language: Python 
+
+# setup build machine
+before_install:
+  - travis_retry sudo apt-get update
+  - travis_retry sudo apt-get install -y --no-install-recommends qemu-user-static binfmt-support 
+  - sudo update-binfmts --display qemu-arm
+
+# build code
+install:
+  - uname -a
+  - docker run --rm -it ubergarm/armhf-ubuntu:trusty uname -a
+
+# test code
+script:
+  - docker build -t ubergarm/rowboat1 .
+#TBD use environment variables e.g.: owner_name/repo_name:branch_name 
+#  - docker build -t $TRAVIS_REPO_SLUG:$TRAVIS_BRANCH .
+
+# save/deploy build artifacts
+after_sucess:
+  - /bin/true
+#  - docker login -e=$DOCKER_EMAIL -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
+#  - docker push ubergarm/rowboat1
+
+# configure which branches are built
+branches:
+  only:
+    - master
+
+# turn off build email spam and turn slack on channel #github
+notifications:
+  email: false
+#  slack: '<account>:<token>#github'
