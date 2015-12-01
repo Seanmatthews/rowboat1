@@ -22,6 +22,11 @@ namespace navigator
         return writeBytes(0x40, COMMAND_SET_TARGET, data, 4);
     }
 
+    bool MaestroCommsInterface::setAllTargets(unsigned short[] targets, unsigned char numTargets)
+    {
+        return false;
+    }
+
     bool MaestroCommsInterface::setTargetMiniSCC(unsigned char channelNumber, unsigned char normalizedTarget)
     {
         unsigned char  data[] = {channelNumber, normalizedTarget};
