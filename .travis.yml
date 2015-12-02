@@ -42,4 +42,5 @@ branches:
 # turn off build email spam and turn slack on channel #github
 notifications:
   email: false
-#  slack: '<account>:<token>#github'
+  slack:
+    secure: oY3Mxu3LEgQaUjHr6bl3IbCU0KcA58EiGb2dDM/JzQyS0gi2GdoYYjCGdno2+y/cB51mMzigJ4GrR8YdfZlmhCDQz4r80ApvxDqkcXDcoBB4/5sI504Pz+pX4PEvaHXSo7Wv1191d59JCCNMwkpGlkYIShY8BmgQfPFL8fKTPV+mp597tg8EzjiUqyZ3iRNbD8kgqdGxAmijQswhaeI5F057Oh9kAXjsWRqUVO6wiQ5w/aPJPeEtWnLaH6WVtg3UMSIbuTs1DqZME7drn6kx8Dfcu+PUVFPEkuVO/7rnRPxMwQQSYuqw4m0GoJQJxpoFvInG12HB+7yirrBDjpoyz/L5xsw4F8XHJY55IAjDvbVLgLYffsEiI6ASQu4G42h7P1vGv7P9L/wdtmZcxFZrDf8T0nWNpat3bLnDfVF5hqs6LgzDOFiRydPhBajpJrU5m89nBL4dKZ/L6eKwiZ4JnfX9VBlLBCJDuxhNnwSJzb+USF33igcf91YwNB0PIsm8Idq8br0PiY8Rt555MaUBRnOV+q7eQCTy11OWMZylLKcM3BYdnQ2FXyeV2eqDt0h68EXjJha8U6eAEh+z5UkfzeZ3G+nEokJ6FLD/MGYngW3q/EPw943cnGHt++/E3RDsk2W7ytSeg+H2e3CvcC49i6DfhUqHeRwSvjYd8Day+NU=
