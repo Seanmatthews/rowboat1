@@ -7,6 +7,21 @@
 namespace navigator
 {
 
+    struct ServoStatus
+    {
+        // The position in units of quarter-microseconds.
+        unsigned short position;
+
+        // The target position in units of quarter-microseconds.
+        unsigned short target;
+
+        // The speed limit.  Units depends on your settings.
+        unsigned short speed;
+
+        // The acceleration limit.  Units depend on your settings.
+        unsigned char acceleration;
+    };
+
     class MaestroCommsInterface
     {
       public:
@@ -20,11 +35,12 @@ namespace navigator
         static unsigned short getMaxChannelValue() { return maxChannelValue_; }
         
         bool setTarget(unsigned char channelNumber, unsigned short target);
+        bool setAllTargets(unsigned short targets[], unsigned char numTargets);
         bool setTargetMiniSCC(unsigned char channelNumber, unsigned char normalizedTarget);
         bool setMaxSpeed(unsigned char channelNumber, unsigned short speed);
         bool setMaxAcceleration(unsigned char channelNumber, unsigned short acceleration);
 
-        bool getPosition(unsigned char channelNumber, unsigned short& position);
+//        bool getPosition(unsigned char channelNumber, unsigned short& position);
         bool getMovingState(unsigned char channelNumber, bool& servosMoving);
         bool getError(unsigned short& error);
 
@@ -54,8 +70,8 @@ namespace navigator
         static const unsigned short CLEAR = 0x7f;
         static const unsigned short minChannelValue_ = 3968;
         static const unsigned short maxChannelValue_ = 8000;
-        virtual bool writeBytes(unsigned char requestType, unsigned char request, unsigned char* const data, unsigned int numBytes) = 0;
-        virtual bool readBytes(unsigned char* data, unsigned int numBytes) = 0;
+        virtual bool writeBytes(unsigned char request, unsigned char* const data, unsigned int length) = 0;
+        virtual bool readBytes(unsigned char request, unsigned char* data, unsigned int length) = 0;
 
         std::string errorMessage_;
     };

@@ -63,25 +63,23 @@ namespace navigator
         return false;
     }
 
-    bool MaestroUsb::writeBytes(unsigned char requestType, unsigned char request, unsigned char* const data, unsigned int numBytes)
+    bool MaestroUsb::writeBytes(unsigned char request, unsigned char* data, unsigned int length)
     {
-        int err = writeBytes(requestType, request, 0, 0, data, numBytes);
-        return isError(err);
+        return writeBytes(request, 0, 0, data, length);
     }
 
-    bool MaestroUsb::writeBytes(unsigned char requestType, unsigned char request, unsigned short value, unsigned short index)
+    bool MaestroUsb::writeBytes(unsigned char request, unsigned short value, unsigned short index)
     {
-        int ret = writeBytes(requestType, request, value, index, (unsigned char*)0, (unsigned short)0);
-        return isError(ret);
+        return writeBytes(request, value, index, (unsigned char*)0, (unsigned short)0);
     }
 
     // The function is not required by the interface, but serves to
     // interface the libusb transfer control function directly.
-    bool MaestroUsb::writeBytes(unsigned char requestType, unsigned char request, unsigned short value,
+    bool MaestroUsb::writeBytes(unsigned char request, unsigned short value,
                                 unsigned short index, unsigned char* const data, unsigned short length)
     {
         int err = libusb_control_transfer(deviceHandle_,
-                                          requestType,
+                                          0x40,
                                           request,
                                           value,
                                           index,
@@ -91,8 +89,22 @@ namespace navigator
         return !isError(err);
     }
 
-    bool MaestroUsb::readBytes(unsigned char* data, unsigned int numBytes)
+    bool MaestroUsb::readBytes(unsigned char request, unsigned char* data, unsigned int length)
     {
+        return readBytes(request, 0, 0, data, length);
+    }
+
+    bool MaestroUsb::readBytes(unsigned char request, unsigned short value, unsigned short index,
+                               unsigned char* data, unsigned short length)
+    {
+        unsigned int bytesRead = libusb_control_transfer(deviceHandle_,
+                                                         0xC0,
+                                                         request,
+                                                         value,
+                                                         index,
+                                                         data,
+                                                         length,
+                                                         (unsigned int)5000);
         return true;
     }
 
@@ -101,7 +113,7 @@ namespace navigator
     {
         for (std::vector<unsigned short>::iterator it = productList_.begin(); it != productList_.end(); it++)
         {
-            ROS_INFO_STREAM("Attempting to open maestro with vendorID:productID " << *it << ":" << VENDOR_ID);
+            ROS_INFO_STREAM("Attempting to open maestro with vendorID:productID " << VENDOR_ID << ":" << *it);
             deviceHandle_ = libusb_open_device_with_vid_pid(context_, VENDOR_ID, *it);
             if (deviceHandle_ != NULL)
             {
@@ -111,7 +123,7 @@ namespace navigator
                 case 0x8A: servoCount_ = 12;
                 case 0x8B: servoCount_ = 18;
                 case 0x8C: servoCount_ = 24;
-                default: servoCount_ = 6;
+                default: servoCount_ = 0;
                 }
                 break;
             }
