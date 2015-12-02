@@ -5,6 +5,12 @@ services:
 
 language: Python 
 
+# Use Travis-CI CLI to setup encrypted environment variables
+# Docker friendly: http://hub.docker.com/r/ubergarm/travis-ci-cli 
+#env:
+#  global:
+#    - secure: {{ foo }}
+
 # setup build machine
 before_install:
   - travis_retry sudo apt-get update

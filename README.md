@@ -1,9 +1,9 @@
 rowboat1
 ===
 
-[![Travis CI](https://travis-ci.org/ubergarm/rowboat1.svg)](https://travis-ci.org/ubergarm/rowboat1/)
+[![Travis CI](https://travis-ci.org/Seanmatthews/rowboat1.svg)](https://travis-ci.org/Seanmatthews/rowboat1/)
 
-This is the repository for Brooklyn's Diamond Reef Explorer's autonomous underwater vehicle, Rowboat-1. The project is currently in its planning and design phase. If you'd like help out, no matter what your skills, join our meetup group at http://www.meetup.com/Tech-Tinkerers-NYC. 
+This is the repository for Brooklyn's [Diamond Reef Explorer's](http://www.diamondreefexplorers.org/) autonomous underwater vehicle, Rowboat-1. The project is currently in its planning and design phase. If you'd like help out, no matter what your skills, join our meetup group at http://www.meetup.com/Tech-Tinkerers-NYC. 
 
 # Dev Setup
 
@@ -30,7 +30,7 @@ This is the repository for Brooklyn's Diamond Reef Explorer's autonomous underwa
 8. The ROS tutorials: http://wiki.ros.org/ROS/Tutorials
 
  
-CircleCI Docker Image Automation
+Docker Image Automation
 ===
 
 This project contains files relevent to the automated building of armhf
@@ -41,36 +41,33 @@ This solution combines:
 
 * Host kernel support for binfmt misc
 * qemu-arm-static
-* chroot
 * Docker armhf images
-* CircleCI
 
-## Quick Start
+## Configure Host
 
-To configure build automation and be able to run ARM Docker containers
-from an x86-64 system follow these steps or check out the reference
-found at the bottom.
+*NOTE*: Assumes you have Docker up and running already.
 
-    sudo curl -o /usr/share/binfmts/qemu-arm http://ubergarm.com/dre/qemu-arm
-    sudo curl -o /usr/bin/qemu-arm-static http://ubergarm.com/dre/qemu-arm-static
-    sudo modprobe binfmt_misc
-    sudo apt-get install -y binfmt-support
+    apt-get update && apt-get install -y --no-install-recommends \
+            qemu-user-static \
+    	    binfmt-support
+    update-binfmts --enable qemu-arm
+    update-binfmts --display qemu-arm
 
-To test that the host is configured properly:
+Check [this blog post](http://blog.ubergarm.com/run-arm-docker-images-on-x86_64-hosts/) for more detailed info about this.
 
-    curl -O http://ubergarm.com/dre/hello_world-arm-static
-    chmod a+x hello_world-arm-static
-    ./hello_world-arm-static
+## Test Host Config
 
-## Build ARM Docker Image 
+    docker run --rm -it ubergarm/armhf-ubuntu:trusty uname -a 
+
+## Build armhf Docker Image 
 
 From top level project directory.
 
     docker build -t ubergarm/rowboat1 .
 
-## Run ARM Docker Image
+## Run armhf Docker Image
 
-   docker run --rm -it ubergarm/rowboat1
+   docker run --rm -it ubergarm/rowboat1 /bin/bash
 
 ## Update ubergarm base image
 
@@ -81,6 +78,7 @@ Pull the latest base image and add the qemu-arm-static binary.
     docker cp /usr/bin/qemu-arm-static $CID:/usr/bin/qemu-arm-static
     docker commit $CID ubergarm/armhf-ubuntu:trusty
     docker push ubergarm/armhf-ubuntu:trusty
-    
-## References
-[blog.ubergarm.com](http://blog.ubergarm.com/run-arm-docker-images-on-x86_64-hosts/)
+
+## Contributing
+
+Check us out at [Diamond Reef Explorers](http://www.diamondreefexplorers.org/)
