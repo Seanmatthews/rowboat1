@@ -1,1 +1,1 @@
-uint16[] pwmPercent 
+int16[] pwmPercent 

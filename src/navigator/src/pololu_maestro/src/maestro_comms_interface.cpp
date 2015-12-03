@@ -16,14 +16,53 @@ namespace navigator
     
     MaestroCommsInterface::~MaestroCommsInterface() {}
 
+    // Convert target position [-100, 100] to microseconds.
+    // Note: Keep this function simple and optimized for speed.
+    unsigned short MaestroCommsInterface::convertTargetToMicros(char target)
+    {
+        if (target > 100) target = 100;
+        if (target < -100) target = -100;
+
+        float scaleFactor = target / 100.0;
+        float delta = 0;
+        if (target < 0)
+        {
+            delta = (float)(channelHomeValue_ - deadZoneValue_ - minChannelValue_) * scaleFactor;
+        }
+        else if (target > 0)
+        {
+            delta = (float)(maxChannelValue_ - channelHomeValue_ + deadZoneValue_) * scaleFactor;
+        }
+        return (unsigned short)((float)deadZoneValue_ + delta);
+    }
+    
     bool MaestroCommsInterface::setTarget(unsigned char channelNumber, unsigned short target)
     {
         unsigned char data[] = {channelNumber, target & CLEAR, (target >> 7) & CLEAR};
-        return writeBytes(COMMAND_SET_TARGET, data, 4);
+        return writeBytes(COMMAND_SET_TARGET, data, 3);
     }
 
-    bool MaestroCommsInterface::setAllTargets(unsigned short targets[], unsigned char numTargets)
+    // Simultaneously set targets on all Maestro channels
+    bool MaestroCommsInterface::setAllTargets(std::vector<char> targets)
     {
+        // Assert that:
+        // 1) we're not overstepping the device's channel limit
+        // 2) the user has proviede at least one channel
+        // 3) the Maestro supports this message (12, 18, 24 channel versions)
+        if (targets.size() <= numChannels_ && targets.size() > 0 && numChannels_ >= 12)
+        {
+            int dataLength = 3 * targets.size() + 1;
+            unsigned char data[dataLength]; 
+            data[0] = numChannels_;
+            for (int i=0; i<targets.size(); ++i)
+            {
+                unsigned short targetMicros = convertTargetToMicros(targets[i]);
+                data[i*3+1] = i;
+                data[i*3+2] = targetMicros & CLEAR;
+                data[i*3+3] = (targetMicros >> 7) & CLEAR;
+            }
+            return writeBytes(COMMAND_SET_ALL_TARGETS, data, dataLength);
+        }
         return false;
     }
 
@@ -36,13 +75,13 @@ namespace navigator
     bool MaestroCommsInterface::setMaxSpeed(unsigned char channelNumber, unsigned short speed)
     {
         unsigned char data[] = {channelNumber, speed & CLEAR, (speed >> 7) & CLEAR};
-        return writeBytes(COMMAND_SET_SPEED, data, 4);
+        return writeBytes(COMMAND_SET_SPEED, data, 3);
     }
 
     bool MaestroCommsInterface::setMaxAcceleration(unsigned char channelNumber, unsigned short acceleration)
     {
         unsigned char data[] = {channelNumber, acceleration & CLEAR, (acceleration >> 7) & CLEAR};
-        return writeBytes(COMMAND_SET_ACCELERATION, data, 4);
+        return writeBytes(COMMAND_SET_ACCELERATION, data, 3);
     }
 
     bool MaestroCommsInterface::goHome()

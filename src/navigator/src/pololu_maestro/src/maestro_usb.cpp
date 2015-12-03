@@ -79,7 +79,7 @@ namespace navigator
                                 unsigned short index, unsigned char* const data, unsigned short length)
     {
         int err = libusb_control_transfer(deviceHandle_,
-                                          0x40,
+                                          VENDOR_WRITE,
                                           request,
                                           value,
                                           index,
@@ -98,7 +98,7 @@ namespace navigator
                                unsigned char* data, unsigned short length)
     {
         unsigned int bytesRead = libusb_control_transfer(deviceHandle_,
-                                                         0xC0,
+                                                         VENDOR_READ,
                                                          request,
                                                          value,
                                                          index,
@@ -119,11 +119,11 @@ namespace navigator
             {
                 switch(*it)
                 {
-                case 0x89: servoCount_ = 6;
-                case 0x8A: servoCount_ = 12;
-                case 0x8B: servoCount_ = 18;
-                case 0x8C: servoCount_ = 24;
-                default: servoCount_ = 0;
+                case 0x89: numChannels_ = 6;
+                case 0x8A: numChannels_ = 12;
+                case 0x8B: numChannels_ = 18;
+                case 0x8C: numChannels_ = 24;
+                default: numChannels_ = 0;
                 }
                 break;
             }

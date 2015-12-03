@@ -43,7 +43,7 @@ namespace navigator {
     // Send a message to the Maestro to control all the PWM ports at the same time
     void MaestroRosLayer::controlAllCB(const pololu_maestro::ControlPWMList::ConstPtr& msg)
     {
-
+        comms->setAllTargets(msg.targets, msg.numTargets);
     }
 
     void MaestroRosLayer::mainLoop()
