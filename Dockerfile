@@ -24,25 +24,19 @@ RUN rosdep init
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Add odroid user (in root group) and home directory
-RUN groupadd -r odroid && \
-    useradd -r -g odroid odroid && \
-    usermod -a -G root odroid && \
-    mkdir -p /home/odroid && \
-    chown -R odroid:odroid /home/odroid
-
-# Copy in git repo
-COPY . /home/odroid/rowboat1
-RUN chown -R odroid:odroid /home/odroid
+# Add odroid user (w/ root privileges)
+RUN useradd -ou 0 -g 0 -m odroid
 
 # switch to new user
 USER odroid
 WORKDIR /home/odroid
 
-# configure ROS 
-RUN echo "source /opt/ros/jade/setup.bash" >> /home/odroid/.bashrc
-RUN bash -c "source /opt/ros/jade/setup.bash && \
-    rosdep update"
+# configure ROS (it will give Warning as our UID is same as root, 0)
+RUN echo "source /opt/ros/jade/setup.bash" >> /home/odroid/.bash_aliases
+RUN bash -c "source /home/odroid/.bashrc && rosdep update"
+
+# Copy in git repo
+COPY . /home/odroid/rowboat1
 
 # build everything 
 RUN /home/odroid/rowboat1/src/install/ci-build.sh 

@@ -1,7 +1,11 @@
 #!/bin/bash
-#TBD extend this for complete build coverage
+set -e
 source /opt/ros/jade/setup.bash
-cd /home/odroid/rowboat1/src/safety
-catkin_make
-#cd /home/odroid/rowboat1/src/navigator
-#catkin_make
+# extend this as needed for complete build coverage
+for d in arbiter navigator operator safety
+do
+    echo " ~~~~### BUILDING $d ###~~~~"
+    cd /home/odroid/rowboat1/src/$d
+    catkin_make
+done
+

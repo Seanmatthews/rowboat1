@@ -24,20 +24,21 @@ install:
 
 # test code
 script:
-  - docker build -t ubergarm/rowboat1 .
+  - docker build -t rowboat/rowboat1 .
 #TBD use environment variables e.g.: owner_name/repo_name:branch_name 
 #  - docker build -t $TRAVIS_REPO_SLUG:$TRAVIS_BRANCH .
 
 # save/deploy build artifacts
 after_sucess:
   - /bin/true
+  - docker images
 #  - docker login -e=$DOCKER_EMAIL -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
-#  - docker push ubergarm/rowboat1
+#  - docker push rowboat/rowboat1
 
 # configure which branches are built
-branches:
-  only:
-    - master
+#branches:
+#  only:
+#    - master
 
 # turn off build email spam and turn slack on channel #github
 notifications:
