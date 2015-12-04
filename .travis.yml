@@ -27,20 +27,13 @@ install:
 # test code
 script:
   - docker build -t rowboat/rowboat1 .
-#  - docker build -t rowboat/rowboat1:$TRAVIS_BRANCH .
 
-# save/deploy build artifacts
-after_sucess:
-  - docker images
-  - docker login -e=$DOCKER_EMAIL -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
-  - docker push rowboat/rowboat1
-#  - docker push rowboat/rowboat1:$TRAVIS_BRANCH
-  - rm -rf ~/.docker || rm -rf ~/.dockercng || true
-
-# configure which branches are built
-branches:
-  only:
-    - master
+# save/deploy/push build artifacts
+deploy:
+  provider: script
+  script: src/install/ci-deploy.sy
+  on:
+    branch: master
 
 # turn off build email spam and turn slack on channel #github
 notifications:
