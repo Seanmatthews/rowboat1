@@ -39,11 +39,11 @@ namespace navigator
 
         // Claim first interface of device
         int detach = libusb_detach_kernel_driver(deviceHandle_, 0);
-        if (detach != 0)
-        {
-            ROS_INFO_STREAM("Could not detach kernel driver. Error " << detach);
-            return false;
-        }
+	//        if (detach != 0)
+        //{
+        //    ROS_INFO_STREAM("Could not detach kernel driver. Error " << detach);
+        //    return false;
+        //}
         int claim = libusb_claim_interface(deviceHandle_, 0);
         if (claim != 0) {
             ROS_ERROR_STREAM("Could not claim interface " << deviceHandle_ );

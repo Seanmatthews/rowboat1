@@ -41,13 +41,13 @@ namespace navigator
     }
 
     // Simultaneously set targets on all Maestro channels
-    bool MaestroCommsInterface::setAllTargets(std::vector<char> targets)
+    bool MaestroCommsInterface::setAllTargets(std::vector<signed char> targets)
     {
 
         for (int i=0; i<targets.size(); ++i)
         {
-            ROS_INFO_STREAM(i << ": " << targets[i]);
-        };
+	    ROS_INFO_STREAM(i << ": " << (int)targets[i]);
+        }
 
         // Assert that:
         // 1) we're not overstepping the device's channel limit

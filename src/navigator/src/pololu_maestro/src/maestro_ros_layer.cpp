@@ -44,8 +44,8 @@ namespace navigator {
     // Send a message to the Maestro to control all the PWM ports at the same time
     void MaestroRosLayer::controlAllCB(const pololu_maestro::ControlPWMList::ConstPtr& msg)
     {
-        // Isit faster to copy the elements into a new vector?
-        comms->setAllTargets(reinterpret_cast<std::vector<char> const& >(msg->targets));
+        // Is it faster to copy the elements into a new vector?
+        comms->setAllTargets(msg->targets);
     }
 
     // All it does is spin. Stupid loop.

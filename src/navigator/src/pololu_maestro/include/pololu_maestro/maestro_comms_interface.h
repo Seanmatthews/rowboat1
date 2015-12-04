@@ -36,7 +36,7 @@ namespace navigator
         static unsigned short getMaxChannelValue() { return maxChannelValue_; }
         
         bool setTarget(unsigned char channelNumber, unsigned short target);
-        bool setAllTargets(const std::vector<char> targets);
+        bool setAllTargets(const std::vector<signed char> targets);
         bool setTargetMiniSCC(unsigned char channelNumber, unsigned char normalizedTarget);
         bool setMaxSpeed(unsigned char channelNumber, unsigned short speed);
         bool setMaxAcceleration(unsigned char channelNumber, unsigned short acceleration);
