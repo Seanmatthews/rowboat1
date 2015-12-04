@@ -23,7 +23,7 @@ namespace navigator {
         {
             ROS_ERROR_STREAM("Could not connect to a Maestro device");
         }
-	ROS_INFO_STREAM("Connected to a Maestro device!");
+        ROS_INFO_STREAM("Connected to a Maestro device!");
         
         // Init pubs, subs, and srvs
         infoPub_ = nh_.advertise<pololu_maestro::Info>("info", 0);
@@ -34,6 +34,7 @@ namespace navigator {
         mainLoop();
     }
 
+    // Kills this ROS node
     void MaestroRosLayer::killCB(const std_msgs::String::ConstPtr& msg)
     {
         ROS_INFO_STREAM("put the killer's name here");
@@ -43,17 +44,17 @@ namespace navigator {
     // Send a message to the Maestro to control all the PWM ports at the same time
     void MaestroRosLayer::controlAllCB(const pololu_maestro::ControlPWMList::ConstPtr& msg)
     {
-        comms->setAllTargets(msg.targets, msg.numTargets);
+        // Isit faster to copy the elements into a new vector?
+        comms->setAllTargets(reinterpret_cast<std::vector<char> const& >(msg->targets));
     }
 
+    // All it does is spin. Stupid loop.
     void MaestroRosLayer::mainLoop()
     {
         ros::Rate loopRate(loopRateHz_);
         
         while (ros::ok())
         {
-            
-            
             ros::spinOnce();
             loopRate.sleep();
         }

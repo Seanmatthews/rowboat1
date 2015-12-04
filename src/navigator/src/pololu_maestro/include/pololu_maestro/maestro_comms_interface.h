@@ -36,16 +36,13 @@ namespace navigator
         static unsigned short getMaxChannelValue() { return maxChannelValue_; }
         
         bool setTarget(unsigned char channelNumber, unsigned short target);
-        bool setAllTargets(std::vector<char> targets);
+        bool setAllTargets(const std::vector<char> targets);
         bool setTargetMiniSCC(unsigned char channelNumber, unsigned char normalizedTarget);
         bool setMaxSpeed(unsigned char channelNumber, unsigned short speed);
         bool setMaxAcceleration(unsigned char channelNumber, unsigned short acceleration);
-
-//        bool getPosition(unsigned char channelNumber, unsigned short& position);
-        bool getMovingState(unsigned char channelNumber, bool& servosMoving);
-        bool getError(unsigned short& error);
-
         bool goHome();
+//        bool getPosition(unsigned char channelNumber, unsigned short& position);
+
 
       protected:
         MaestroCommsInterface();
@@ -53,6 +50,8 @@ namespace navigator
         
       private:
 
+        virtual bool writeBytes(unsigned char request, unsigned char* const data, unsigned int length) = 0;
+        virtual bool readBytes(unsigned char request, unsigned char* data, unsigned int length) = 0;
         unsigned short convertTargetToMicros(char target);
         
         enum Commands
@@ -77,12 +76,7 @@ namespace navigator
         static const unsigned short maxChannelValue_ = 8000;
         static const unsigned short channelHomeValue_ = 6000;
         static const unsigned short deadZoneValue_ = 25; // This is specific to T200 thrusters
-        virtual bool writeBytes(unsigned char request, unsigned char* const data, unsigned int length) = 0;
-        virtual bool readBytes(unsigned char request, unsigned char* data, unsigned int length) = 0;
-
         std::string errorMessage_;
-
-        
     };
 }
 

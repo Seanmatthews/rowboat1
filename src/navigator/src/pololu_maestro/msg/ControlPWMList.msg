@@ -1,1 +1,1 @@
-int16[] pwmPercent 
+int8[] targets 

@@ -1,14 +1,10 @@
+#include <ros/ros.h>
 #include "pololu_maestro/maestro_comms_interface.h"
+
 
 namespace navigator
 {
     
-    //CommsInterface* CommsInterface::createCommsInterface(const std::string& portName, unsigned int baudRate, std::string* error )
-    //{
-    //    // TODO
-    //    return new CommsInterface();
-    //}
-
     MaestroCommsInterface::MaestroCommsInterface()
         : errorMessage_()
     {
@@ -35,7 +31,9 @@ namespace navigator
         }
         return (unsigned short)((float)deadZoneValue_ + delta);
     }
-    
+
+    // UNUSED
+    // Set position for one target
     bool MaestroCommsInterface::setTarget(unsigned char channelNumber, unsigned short target)
     {
         unsigned char data[] = {channelNumber, target & CLEAR, (target >> 7) & CLEAR};
@@ -45,6 +43,12 @@ namespace navigator
     // Simultaneously set targets on all Maestro channels
     bool MaestroCommsInterface::setAllTargets(std::vector<char> targets)
     {
+
+        for (int i=0; i<targets.size(); ++i)
+        {
+            ROS_INFO_STREAM(i << ": " << targets[i]);
+        };
+
         // Assert that:
         // 1) we're not overstepping the device's channel limit
         // 2) the user has proviede at least one channel
@@ -66,27 +70,31 @@ namespace navigator
         return false;
     }
 
+    // PORT THIS FUNCTIONALITY TO SETTARGET
+    // Quick function for setting target positions
     bool MaestroCommsInterface::setTargetMiniSCC(unsigned char channelNumber, unsigned char normalizedTarget)
     {
         unsigned char data[] = {channelNumber, normalizedTarget};
         return writeBytes(COMMAND_MINI_SSC, data, 2);
     }
-        
+
+    // Set the maximum speed at which a servo may move
     bool MaestroCommsInterface::setMaxSpeed(unsigned char channelNumber, unsigned short speed)
     {
         unsigned char data[] = {channelNumber, speed & CLEAR, (speed >> 7) & CLEAR};
         return writeBytes(COMMAND_SET_SPEED, data, 3);
     }
 
+    // Set the max acceleration of the servo's movement
     bool MaestroCommsInterface::setMaxAcceleration(unsigned char channelNumber, unsigned short acceleration)
     {
         unsigned char data[] = {channelNumber, acceleration & CLEAR, (acceleration >> 7) & CLEAR};
         return writeBytes(COMMAND_SET_ACCELERATION, data, 3);
     }
 
+    // Send all servos to home position
     bool MaestroCommsInterface::goHome()
     {
-        unsigned char data[] = {};
         return writeBytes(COMMAND_GO_HOME, 0, 0);
     }
 
@@ -106,17 +114,4 @@ namespace navigator
         return false;
     }*/
 
-    bool MaestroCommsInterface::getMovingState(unsigned char channelNumber, bool& servosMoving)
-    {
-        // TODO
-        return false;
-    }
-
-    bool MaestroCommsInterface::getError(unsigned short& error)
-    {
-        // TODO
-        return false;
-    }
-
-    
 }

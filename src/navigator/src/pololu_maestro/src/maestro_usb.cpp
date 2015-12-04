@@ -41,7 +41,7 @@ namespace navigator
         int detach = libusb_detach_kernel_driver(deviceHandle_, 0);
         if (detach != 0)
         {
-            ROS_INFO_STREAM("Could not detach kernel driver");
+            ROS_INFO_STREAM("Could not detach kernel driver. Error " << detach);
             return false;
         }
         int claim = libusb_claim_interface(deviceHandle_, 0);
@@ -115,6 +115,7 @@ namespace navigator
         {
             ROS_INFO_STREAM("Attempting to open maestro with vendorID:productID " << VENDOR_ID << ":" << *it);
             deviceHandle_ = libusb_open_device_with_vid_pid(context_, VENDOR_ID, *it);
+            ROS_INFO_STREAM("device handle " << deviceHandle_);
             if (deviceHandle_ != NULL)
             {
                 switch(*it)
