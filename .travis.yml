@@ -1,0 +1,63 @@
+sudo: required
+
+services:
+  - docker
+
+language: Python 
+
+# Use Travis-CI CLI to setup encrypted environment variables
+# Docker friendly: http://hub.docker.com/r/ubergarm/travis-ci-cli 
+env:
+  global:
+    - DOCKER_EMAIL: foo@rat.org
+    - DOCKER_USERNAME: rowboat
+    - secure: K8IVz8EbP0ODzrlN6SoBjdbJRPGl6+dUF5YLG0T9kHRMbxRQlaPxiY/tkIOYhn770UKiYLXhb91149VjNa0ph/zxleMFbdjXZUgeFr9mjQeDMAi4X9xSv1dN1GFUYO3jz4yvOJqGc7qROY2pGaVsj+AOOweXVSI1F9jbn6SXaSsTUQB+3VC5vh+uNXKAEmctHB8JUlqO1ixg9V2uT3aLwu1hek6FaDFyluqMBawUbwzyxbMK1/LcnOU67ln4XCR/t+E06GTKVSJN95ZenGtCw+ML3mH7bNgGvmf5HtJo1MxnmG9f1FI6Qy7T1frGx41ImqlZ5jk5b+uVS0QGiYM68cGtCpwFjXxl7gzIMdayZFQoI0mzheAw+7Vd2eRiRMDCecVXEy7Oj9BxDKXHvmDdlkf9XHDOgnG4nNSHiUQ6a8eFdRnyscilGPQgHrvsOyKnvcizJ3hXDU9zxkHmQmbUfIvjy9gBJwlFDa4GFomiwct1qU0NAtZZ8QECWQOvXHAfvHbAT9bUP2eYU5LG6YZ7YPGsYpkooaWfrm1qsg3UA/n5KyDS3Yeq/6whpm91Jl70LbdT/TJegMX0sTf2R+538vEnmoaqsS1af6MCRhvYyY4KQH7PMvcIJrIhjEeKtHKrhiNYz0YThnIgE5vpaJ4uuJ0eYWhRwGqibPb/5qCucrI=
+
+# turn off build email spam and turn slack on channel #github
+notifications:
+  email: false
+  slack:
+    secure: oY3Mxu3LEgQaUjHr6bl3IbCU0KcA58EiGb2dDM/JzQyS0gi2GdoYYjCGdno2+y/cB51mMzigJ4GrR8YdfZlmhCDQz4r80ApvxDqkcXDcoBB4/5sI504Pz+pX4PEvaHXSo7Wv1191d59JCCNMwkpGlkYIShY8BmgQfPFL8fKTPV+mp597tg8EzjiUqyZ3iRNbD8kgqdGxAmijQswhaeI5F057Oh9kAXjsWRqUVO6wiQ5w/aPJPeEtWnLaH6WVtg3UMSIbuTs1DqZME7drn6kx8Dfcu+PUVFPEkuVO/7rnRPxMwQQSYuqw4m0GoJQJxpoFvInG12HB+7yirrBDjpoyz/L5xsw4F8XHJY55IAjDvbVLgLYffsEiI6ASQu4G42h7P1vGv7P9L/wdtmZcxFZrDf8T0nWNpat3bLnDfVF5hqs6LgzDOFiRydPhBajpJrU5m89nBL4dKZ/L6eKwiZ4JnfX9VBlLBCJDuxhNnwSJzb+USF33igcf91YwNB0PIsm8Idq8br0PiY8Rt555MaUBRnOV+q7eQCTy11OWMZylLKcM3BYdnQ2FXyeV2eqDt0h68EXjJha8U6eAEh+z5UkfzeZ3G+nEokJ6FLD/MGYngW3q/EPw943cnGHt++/E3RDsk2W7ytSeg+H2e3CvcC49i6DfhUqHeRwSvjYd8Day+NU=
+
+
+# setup build machine
+before_install:
+  - travis_retry sudo apt-get update
+  - travis_retry sudo apt-get install -y --no-install-recommends qemu-user-static binfmt-support cowsay
+  - PATH=$PATH:/usr/games
+  - sudo update-binfmts --display qemu-arm
+
+# build code
+install:
+  - uname -a
+  - docker run --rm -it ubergarm/armhf-ubuntu:trusty uname -a
+
+# optional stuff here
+before_script:
+  - cowsay -y System ready to build armhf Docker Images!
+
+# test code
+script:
+  - docker build -t rowboat/rowboat1 .
+  - docker images
+
+# Show some status
+after_success:
+  - cowsay -s Build of $TRAVIS_REPO_SLUG:$TRAVIS_BRANCH success!
+after_failure:
+  - cowsay -d Build of $TRAVIS_REPO_SLUG:$TRAVIS_BRANCH fails...
+
+# save/deploy/push build artifacts
+before_deploy:
+  - docker login -e=$DOCKER_EMAIL -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
+deploy:
+  provider: script
+  script: ./src/install/ci-deploy.sh
+  on:
+    branch: master
+after_deploy:
+  - docker search rowboat/rowboat1
+
+# Jobs Done
+after_script:
+  - cowsay -g All ur CI are belongs to us!

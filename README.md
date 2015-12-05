@@ -1,7 +1,9 @@
-# rowboat1
-First AUV design + implementation
+rowboat1
+===
 
-This is the repository for Brooklyn's Diamond Reef Explorer's autonomous underwater vehicle, Rowboat-1. The project is currently in its planning and design phase. If you'd like help out, no matter what your skills, join our meetup group at http://www.meetup.com/Tech-Tinkerers-NYC. 
+[![Travis CI](https://travis-ci.org/Seanmatthews/rowboat1.svg)](https://travis-ci.org/Seanmatthews/rowboat1/)
+
+This is the repository for Brooklyn's [Diamond Reef Explorer's](http://www.diamondreefexplorers.org/) autonomous underwater vehicle, Rowboat-1. The project is currently in its planning and design phase. If you'd like help out, no matter what your skills, join our meetup group at http://www.meetup.com/Tech-Tinkerers-NYC. 
 
 # Dev Setup
 
@@ -26,3 +28,57 @@ This is the repository for Brooklyn's Diamond Reef Explorer's autonomous underwa
 6. From the rowboat1/src/install directory, run `./base-install.sh`
 7. `source ~/.bashrc`
 8. The ROS tutorials: http://wiki.ros.org/ROS/Tutorials
+
+ 
+Docker Image Automation
+===
+
+This project contains files relevent to the automated building of armhf
+(armv7) compatible Docker images. These images can be used for dev,
+build, test, and deploy to ensure a consistent user experience.
+
+This solution combines:
+
+* Host kernel support for binfmt misc
+* qemu-arm-static
+* Docker armhf images
+
+## Configure Host
+
+*NOTE*: Assumes you have Docker up and running already.
+
+    apt-get update && apt-get install -y --no-install-recommends \
+            qemu-user-static \
+    	    binfmt-support
+    update-binfmts --enable qemu-arm
+    update-binfmts --display qemu-arm
+
+Check [this blog post](http://blog.ubergarm.com/run-arm-docker-images-on-x86_64-hosts/) for more detailed info about this.
+
+## Test Host Config
+
+    docker run --rm -it ubergarm/armhf-ubuntu:trusty uname -a 
+
+## Build armhf Docker Image 
+
+From top level project directory.
+
+    docker build -t ubergarm/rowboat1 .
+
+## Run armhf Docker Image
+
+   docker run --rm -it ubergarm/rowboat1 /bin/bash
+
+## Update ubergarm base image
+
+Pull the latest base image and add the qemu-arm-static binary.
+
+    docker pull ioft/armhf-ubuntu:trusty
+    CID=$(docker create --name trusty ioft/armhf-ubuntu:trusty)
+    docker cp /usr/bin/qemu-arm-static $CID:/usr/bin/qemu-arm-static
+    docker commit $CID ubergarm/armhf-ubuntu:trusty
+    docker push ubergarm/armhf-ubuntu:trusty
+
+## Contributing
+
+Check us out at [Diamond Reef Explorers](http://www.diamondreefexplorers.org/)
