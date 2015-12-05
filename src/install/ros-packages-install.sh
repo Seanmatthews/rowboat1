@@ -2,6 +2,7 @@
 ROWBOAT_INSTALL_DIR=/home/odroid/rowboat1/src
 
 # Install ROS packages
+sudo apt-get -y install ros-jade-image-transport
 
 # Make all local workspaces and add paths to workspace
 for ws in safety arbiter navigator
