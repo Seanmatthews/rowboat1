@@ -1,4 +1,0 @@
-guardian: {
-  loopRateHz: 20,
-  guardedNodes: [],  
-}
