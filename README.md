@@ -8,8 +8,9 @@ This is the repository for Brooklyn's [Diamond Reef Explorer's](http://www.diamo
 # Dev Setup
 
 ## Mac/Linux Setup
-0. Install VirtualBox from https://www.virtualbox.org/wiki/Downloads
-0. Install Vagrant from https://www.vagrantup.com
+1. Install VirtualBox from https://www.virtualbox.org/wiki/Downloads
+1. Install Vagrant from https://www.vagrantup.com
+1. `vagrant plugin install vagrant-vbguest`
 2. Install Git from https://git-scm.com 
 1. Checkout the project with Git
 2. Go to src directory

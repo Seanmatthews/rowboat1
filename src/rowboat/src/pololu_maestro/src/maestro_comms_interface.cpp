@@ -8,110 +8,143 @@ namespace navigator
     MaestroCommsInterface::MaestroCommsInterface()
         : errorMessage_()
     {
+        // Add all Maestros to product list
+        productList_[0x89] = 6; 
+        productList_[0x8A] = 12; 
+        productList_[0x8B] = 18; 
+        productList_[0x8C] = 24;
     }
     
     MaestroCommsInterface::~MaestroCommsInterface() {}
 
     // Convert target position [-100, 100] to microseconds.
     // Note: Keep this function simple and optimized for speed.
-    unsigned short MaestroCommsInterface::convertTargetToMicros(char target)
+    unsigned short MaestroCommsInterface::convertTargetToMicros(signed char target)
     {
         if (target > 100) target = 100;
         if (target < -100) target = -100;
 
         float scaleFactor = target / 100.0;
+        short sign = (short)(scaleFactor / fabs(scaleFactor));
         float delta = 0;
+
         if (target < 0)
         {
-            delta = (float)(channelHomeValue_ - deadZoneValue_ - minChannelValue_) * scaleFactor;
+            delta = channelHomeValue_ - minChannelValue_;
         }
         else if (target > 0)
         {
-            delta = (float)(maxChannelValue_ - channelHomeValue_ + deadZoneValue_) * scaleFactor;
+            delta = maxChannelValue_ - channelHomeValue_;
         }
-        return (unsigned short)((float)deadZoneValue_ + delta);
+        else
+        {
+            sign = 0; // Discount dead zone when target is 0
+        }
+
+        delta -= deadZoneValue_;
+        delta *= scaleFactor;
+        return (unsigned short)(channelHomeValue_ + sign*deadZoneValue_ + (short)delta);
     }
 
-    // UNUSED
     // Set position for one target
-    bool MaestroCommsInterface::setTarget(unsigned char channelNumber, unsigned short target)
+    bool MaestroCommsInterface::setTarget(unsigned char channelNumber, signed char target)
     {
-        unsigned char data[] = {channelNumber, target & CLEAR, (target >> 7) & CLEAR};
-        return writeBytes(COMMAND_SET_TARGET, data, 3);
+        unsigned short targetMicros = convertTargetToMicros(target);
+        return writeBytes(COMMAND_SET_TARGET, targetMicros, (unsigned short)channelNumber);
     }
 
-    // Simultaneously set targets on all Maestro channels
-    bool MaestroCommsInterface::setAllTargets(std::vector<signed char> targets)
-    {
-
-        for (int i=0; i<targets.size(); ++i)
-        {
-	    ROS_INFO_STREAM(i << ": " << (int)targets[i]);
-        }
-
-        // Assert that:
-        // 1) we're not overstepping the device's channel limit
-        // 2) the user has proviede at least one channel
-        // 3) the Maestro supports this message (12, 18, 24 channel versions)
-        if (targets.size() <= numChannels_ && targets.size() > 0 && numChannels_ >= 12)
-        {
-            int dataLength = 3 * targets.size() + 1;
-            unsigned char data[dataLength]; 
-            data[0] = numChannels_;
-            for (int i=0; i<targets.size(); ++i)
-            {
-                unsigned short targetMicros = convertTargetToMicros(targets[i]);
-                data[i*3+1] = i;
-                data[i*3+2] = targetMicros & CLEAR;
-                data[i*3+3] = (targetMicros >> 7) & CLEAR;
-            }
-            return writeBytes(COMMAND_SET_ALL_TARGETS, data, dataLength);
-        }
-        return false;
-    }
-
-    // PORT THIS FUNCTIONALITY TO SETTARGET
-    // Quick function for setting target positions
+    // Sets the target for a channel, based on an 8-bit value, which the maestro translates
+    // to the full-valued quarter MS value, where 127 is "neutral".
     bool MaestroCommsInterface::setTargetMiniSCC(unsigned char channelNumber, unsigned char normalizedTarget)
     {
-        unsigned char data[] = {channelNumber, normalizedTarget};
-        return writeBytes(COMMAND_MINI_SSC, data, 2);
+        return writeBytes(COMMAND_MINI_SSC, channelNumber, normalizedTarget);
     }
 
     // Set the maximum speed at which a servo may move
     bool MaestroCommsInterface::setMaxSpeed(unsigned char channelNumber, unsigned short speed)
     {
-        unsigned char data[] = {channelNumber, speed & CLEAR, (speed >> 7) & CLEAR};
-        return writeBytes(COMMAND_SET_SPEED, data, 3);
+        return writeBytes(COMMAND_SET_SPEED, speed, channelNumber);
     }
 
     // Set the max acceleration of the servo's movement
     bool MaestroCommsInterface::setMaxAcceleration(unsigned char channelNumber, unsigned short acceleration)
     {
-        unsigned char data[] = {channelNumber, acceleration & CLEAR, (acceleration >> 7) & CLEAR};
-        return writeBytes(COMMAND_SET_ACCELERATION, data, 3);
+        return writeBytes(COMMAND_SET_ACCELERATION, acceleration, (unsigned char)(channelNumber | 0x80));
     }
 
     // Send all servos to home position
     bool MaestroCommsInterface::goHome()
     {
-        return writeBytes(COMMAND_GO_HOME, 0, 0);
+        bool success = true;
+        for (int i=0; i<numChannels_; ++i)
+        {
+            success &= writeBytes(COMMAND_SET_TARGET, convertTargetToMicros(0), i);
+        }
+        return success;
     }
 
-    // DANGER: blocking?
-    /*bool MaestroCommsInterface::getPosition(unsigned char channelNumber, unsigned short& position)
+    // Get number of PWM channels
+    int MaestroCommsInterface::getNumChannels()
     {
-        //unsigned char  data[] = {channelNumber};
-        //if (writeBytes(COMMAND_GET_POSITION, data, 2))
-        //{
-            unsigned char response[2] = {0x00, 0x00};
-            if(readBytes(COMMAND_GET_POSITION, response, 2))
+        return numChannels_;
+    }
+
+    // Get the target, position, speed, acceleration of all servos
+    std::vector<ServoStatus> MaestroCommsInterface::getAllPWMInfo()
+    {
+        std::vector<ServoStatus> servos;
+        unsigned char data[numChannels_ * sizeof(ServoStatus)];
+        int bytesRead = readBytes(REQUEST_GET_SERVO_SETTINGS, data, sizeof(data));
+        ROS_INFO_STREAM("[MaestroComms] read " << bytesRead << " bytes");
+        
+        if (bytesRead == numChannels_ * (sizeof(ServoStatus) - 1))
+        {
+            for (int i=0; i<numChannels_; ++i)
             {
-                position = response[1] | response[0];
-                return true;
+                ROS_INFO("%x %x %x %x %x %x %x",
+                         data[i*7],
+                         data[i*7+1],
+                         data[i*7+2],
+                         data[i*7+3],
+                         data[i*7+4],
+                         data[i*7+5],
+                         data[i*7+6]);
+                servos.push_back(*(ServoStatus*)(data + sizeof(ServoStatus) * i));
             }
-        //}
-        return false;
-    }*/
+            ROS_INFO_STREAM(servos[0].target);
+        }
+	else 
+	{
+	  ROS_ERROR_STREAM("Bytes read (" << bytesRead << ") does not equal expected size (" << numChannels_ * sizeof(ServoStatus) << ")"); 
+	}  
+        return servos;
+    }
+
+    // Extract firmware version from mystery function.
+    // Return empty string on failure.
+    std::string MaestroCommsInterface::getFirmwareVersion()
+    {
+        unsigned char buf[14];
+        int read = readBytes(REQUEST_GET_FIRMWARE, buf, sizeof(buf));
+        if (read != 14) return "";
+        unsigned char version[3];
+        version[0] = (buf[12] & 0xF) + (buf[12] >> 4 & 0xF) * 10;
+        version[1] = '.';
+        version[2] = (buf[13] & 0xF) + (buf[13] >> 4 & 0xF) * 10;
+        return std::string((const char*)version);
+    }
+
+    // "Reboot" the device.
+    bool MaestroCommsInterface::reinitialize(unsigned short waitSeconds)
+    {
+        return writeBytes(COMMAND_REINITIALIZE, 0, 0);
+    }
+
+    // Set the duty cycle and period for the device's PWM.
+    // NOTE: You probably shouldn't use this.
+    bool MaestroCommsInterface::setPWM(unsigned short dutyCycle, unsigned short period)
+    {
+        return writeBytes(COMMAND_SET_PWM, dutyCycle, period);
+    }
 
 }

@@ -1,23 +1,17 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(pololu_maestro)
+project(rowboat_msgs)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
   std_msgs
-  rowboat_msgs
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-#find_package(PkgConfig REQUIRED)
-#find_package(libusb-1.0 REQUIRED)
-#pkg_check_modules(LIBUSB REQUIRED libusb-1.0)
-#include_directories(${LIBUSB_INCLUDE_DIRS})
-#link_directories(${LIBUSB_LIBRARY_DIRS})
+
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -49,11 +43,13 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-#add_message_files(
-#   FILES
-#   ControlPWMList.msg
-#   Info.msg
-#)
+add_message_files(
+   FILES
+   MaestroInfo.msg
+   ChannelValue.msg
+   ControlPWMList.msg
+   Heartbeat.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -70,10 +66,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-#generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-#)
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -105,9 +101,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-#  LIBRARIES pololu_maestro
-  CATKIN_DEPENDS roscpp rowboat_msgs
+#  INCLUDE_DIRS include
+#  LIBRARIES rowboat_msgs
+  CATKIN_DEPENDS std_msgs
 #  DEPENDS system_lib
 )
 
@@ -120,34 +116,29 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  include
 )
 
-#link_directories(/usr/local/lib)
-#link_libraries(usb)
-
 ## Declare a C++ library
-# add_library(pololu_maestro
-#   src/${PROJECT_NAME}/pololu_maestro.cpp
+# add_library(rowboat_msgs
+#   src/${PROJECT_NAME}/rowboat_msgs.cpp
 # )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(pololu_maestro_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(rowboat_msgs ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(pololu_maestro_node src/maestro_ros_layer.cpp src/maestro_comms_interface.cpp src/maestro_usb.cpp src/main.cpp)
+# add_executable(rowboat_msgs_node src/rowboat_msgs_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(pololu_maestro_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(rowboat_msgs_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(pololu_maestro_node
-   ${catkin_LIBRARIES}
-   usb-1.0
-)
+# target_link_libraries(rowboat_msgs_node
+#   ${catkin_LIBRARIES}
+# )
 
 #############
 ## Install ##
@@ -164,7 +155,7 @@ target_link_libraries(pololu_maestro_node
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS pololu_maestro pololu_maestro_node
+# install(TARGETS rowboat_msgs rowboat_msgs_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -189,7 +180,7 @@ target_link_libraries(pololu_maestro_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_pololu_maestro.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_rowboat_msgs.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
