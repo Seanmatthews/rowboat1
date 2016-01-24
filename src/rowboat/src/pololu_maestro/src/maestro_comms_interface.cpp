@@ -101,17 +101,13 @@ namespace navigator
         {
             for (int i=0; i<numChannels_; ++i)
             {
-                ROS_INFO("%x %x %x %x %x %x %x",
-                         data[i*7],
-                         data[i*7+1],
-                         data[i*7+2],
-                         data[i*7+3],
-                         data[i*7+4],
-                         data[i*7+5],
-                         data[i*7+6]);
-                servos.push_back(*(ServoStatus*)(data + sizeof(ServoStatus) * i));
+                ServoStatus status;
+                status.position = data[i*7] | data[i*7+1] << 8;
+                status.target = data[i*7+2] | data[i*7+3] << 8;
+                status.speed = data[i*7+4] | data[i*7+5] << 8;
+                status.acceleration = data[i*7+6];
+                servos.push_back(status);
             }
-            ROS_INFO_STREAM(servos[0].target);
         }
 	else 
 	{

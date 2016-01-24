@@ -141,13 +141,17 @@ namespace navigator {
 
             // Fill PWM info 
             std::vector<ServoStatus> pwmInfo = comms->getAllPWMInfo();
-            infoMsg.pwmPositions.clear();
-            infoMsg.pwmTargets.clear();
+            infoMsg.positions.clear();
+            infoMsg.targets.clear();
+            infoMsg.speeds.clear();
+            infoMsg.accelerations.clear();
 
             for (std::vector<ServoStatus>::iterator it = pwmInfo.begin(); it != pwmInfo.end(); ++it)
             {
-                infoMsg.pwmPositions.push_back(it->position);
-                infoMsg.pwmTargets.push_back(it->target);;
+                infoMsg.positions.push_back(it->position);
+                infoMsg.targets.push_back(it->target);
+                infoMsg.speeds.push_back(it->speed);
+                infoMsg.accelerations.push_back(it->acceleration);
             }
             
             pwmInfoPub_.publish(infoMsg);

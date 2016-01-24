@@ -87,7 +87,7 @@ namespace navigator
         static const short minChannelValue_ = 3968;
         static const short maxChannelValue_ = 8000;
         static const short channelHomeValue_ = 6000;
-        static const short deadZoneValue_ = 25; // This is specific to T200 thrusters
+        static const short deadZoneValue_ = 25; // This is specific to T200 thrusters, make config var
         std::string errorMessage_;
     };
 }

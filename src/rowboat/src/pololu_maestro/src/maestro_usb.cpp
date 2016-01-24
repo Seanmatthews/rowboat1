@@ -25,8 +25,8 @@ namespace navigator
             return false;
         }
 
-        // Set suggested debug verbosity level
-        libusb_set_debug(context_, 4);
+        // FOR DEBUGGING: Set suggested debug verbosity level
+        // libusb_set_debug(context_, 4);
 
         if (!findMaestro()) {
             ROS_ERROR_STREAM("Could not find a Maestro device with device handle " << deviceHandle_);
