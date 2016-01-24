@@ -5,7 +5,7 @@
 #include <climits>
 #include <vector>
 
-namespace navigator
+namespace rowboat1
 {
 
     struct ServoStatus

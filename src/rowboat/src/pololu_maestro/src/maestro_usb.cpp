@@ -2,7 +2,7 @@
 #include "pololu_maestro/maestro_usb.h"
 
 
-namespace navigator
+namespace rowboat1
 {
     MaestroUsb::MaestroUsb() 
     : MaestroCommsInterface()

@@ -2,7 +2,7 @@
 #include "pololu_maestro/maestro_comms_interface.h"
 
 
-namespace navigator
+namespace rowboat1
 {
     
     MaestroCommsInterface::MaestroCommsInterface()

@@ -11,7 +11,7 @@
 #include "rowboat_msgs/ControlPWMList.h"
 #include "pololu_maestro/maestro_comms_interface.h"
 
-namespace navigator 
+namespace rowboat1 
 {
     class MaestroRosLayer 
     {

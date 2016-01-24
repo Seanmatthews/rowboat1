@@ -3,7 +3,7 @@
 #include "rowboat_msgs/MaestroInfo.h"
 #include "rowboat_msgs/Heartbeat.h"
 
-namespace navigator {
+namespace rowboat1 {
 
     MaestroRosLayer::MaestroRosLayer(ros::NodeHandle nh)
     {

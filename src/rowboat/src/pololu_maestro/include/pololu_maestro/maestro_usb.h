@@ -28,7 +28,7 @@
  *  0x40 = Write to vendor device
  *  0x80 = Standard read from device
  */
-namespace navigator
+namespace rowboat1
 {
     class MaestroUsb : public MaestroCommsInterface
     {
