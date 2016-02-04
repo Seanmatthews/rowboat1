@@ -95,7 +95,7 @@ namespace rowboat1
         std::vector<ServoStatus> servos;
         unsigned char data[numChannels_ * sizeof(ServoStatus)];
         int bytesRead = readBytes(REQUEST_GET_SERVO_SETTINGS, data, sizeof(data));
-        ROS_INFO_STREAM("[MaestroComms] read " << bytesRead << " bytes");
+//        ROS_INFO_STREAM("[MaestroComms] read " << bytesRead << " bytes");
         
         if (bytesRead == numChannels_ * (sizeof(ServoStatus) - 1))
         {

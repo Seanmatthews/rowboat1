@@ -134,8 +134,6 @@ namespace rowboat1 {
         
         while (ros::ok())
         {
-            ROS_INFO("looping");
-            
             // Fill heartbeat
             hbMsg.status = "OK";
 
