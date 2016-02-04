@@ -24,7 +24,7 @@ namespace rowboat1
         homePub_ = nh_.advertise<std_msgs::Empty>("goHome", 10);
         controlPub_ = nh_.advertise<rowboat_msgs::ControlPWMList>("controlAllPWM", 10);
         controlSub_ = nh_.subscribe("joy", 1000, &ControllerTranslator::xBoxControlReceivedCB, this);
-        
+        ROS_INFO("Almost started");
         mainLoop();
     }
 
@@ -38,13 +38,8 @@ namespace rowboat1
         {
             // Analyze the buffer and account for high buffering rate
             // TODO
-            
-            if (controlMsgBuffer_.size() == 0)
-            {
-                std_msgs::Empty homeMsg;
-                homePub_.publish(homeMsg);
-            }
-            else
+
+            if (controlMsgBuffer_.size() > 0)
             {
                 // If buffer has a value, get it, translate, and publish.
                 rowboat_msgs::ControlPWMList msg;
@@ -52,9 +47,17 @@ namespace rowboat1
                 controlMsgBuffer_.pop_back();
                 controlMsgBuffer_.clear();
                 msg.targets = translateJoy(joyMsg);
-                controlPub_.publish(msg);
-            }
 
+                if (joyMsg.buttons[4] == 1 || joyMsg.buttons[5] == 1)
+                {
+                    std_msgs::Empty homeMsg;
+                    homePub_.publish(homeMsg);
+                }
+                else
+                {
+                    controlPub_.publish(msg);
+                }
+            }
             ros::spinOnce();
             loopRate.sleep();
         }
@@ -65,13 +68,13 @@ namespace rowboat1
     {
         // Buffer incoming joy commands
         // TEMP -- one message at a time, and only if a button was pressed
-        if (controlMsgBuffer_.size() == 0
-            && msg->buttons[0]
-            || msg->buttons[1]
-            || msg->buttons[2]
-            || msg->buttons[3])
+        if (controlMsgBuffer_.size() == 0)
         {
-            controlMsgBuffer_.push_back(*msg);
+            std::vector<int> v(msg->buttons);
+            for (std::vector<int>::iterator it=v.begin(); it != v.end(); ++it)
+            {
+                if (*it > 0) controlMsgBuffer_.push_back(*msg);
+            }
         }
     }
 
@@ -101,6 +104,11 @@ namespace rowboat1
         {
             targets[0] = -25;
             targets[1] = -25;
+        }
+        else 
+        {
+            targets[0] = 0;
+            targets[1] = 0;
         }
 
         return targets;
