@@ -24,7 +24,7 @@ namespace rowboat1
         
         
         ros::NodeHandle nh_;
-       ros::Subscriber controlSub_;
+        ros::Subscriber controlSub_;
         ros::Publisher controlPub_;
         ros::Publisher homePub_;
         
