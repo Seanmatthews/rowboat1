@@ -3,6 +3,8 @@ ROWBOAT_INSTALL_DIR=/root/rowboat1/src
 
 # Install ROS packages
 sudo apt-get -y install ros-indigo-image-transport
+sudo apt-get -y install ros-indigo-teleop-twist-joy
+sudo apt-get -y install ros-indigo-diagnostic-aggregator
 
 # Build
 
