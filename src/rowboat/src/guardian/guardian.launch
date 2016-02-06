@@ -1,4 +1,12 @@
 <launch>
-<launch>
-  <node name="guardian" pkg="guardian" type="guardian" respawn="true" />
+  <group name="safety">
+
+	<!-- Parameters for safety workspace -->
+	<rosparam file="$/vagrant/safety/safety-params.yaml" command="load" />
+
+	<!-- All launch files for packages in the safety workspace -->
+	<!-- ORDER INDEPENDENT -->
+	<include file="$(find guardian)/guardian.launch" />
+
+  </group>
 </launch>
