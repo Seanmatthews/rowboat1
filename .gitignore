@@ -4,3 +4,4 @@ src/*/build
 src/*/devel
 .vagrant
 *#*
+.catkin_tools
