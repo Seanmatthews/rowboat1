@@ -1,0 +1,8 @@
+<launch>
+  <node name="joy" pkg="joy" type="joy_node" name="joy" >
+    <param name="dev" type="str" value="/dev/input/js0" />
+    <param name="deadzone" type="double" value="0.05" />
+    <param name="autorepeat_rate" type="int" value="0" />
+    <param name="coalesce_interval" type="double" value="0.001" />
+  </node>
+</launch>

@@ -1,0 +1,10 @@
+<launch>
+  <!-- Parameter files -->
+
+  <!-- Launch files -->
+  <include file="$(find guardian)/guardian.launch" />
+  <include file="$(controller_translator)/controller_translator.launch" />
+  <include file="$(rowboat_launch)/twist_joy.launch" />
+  <include file="$(rowboat_launch)/joy.launch" />
+  <include file="$(pololu_maestro)/pololu_maestro.launch" />
+</launch>
