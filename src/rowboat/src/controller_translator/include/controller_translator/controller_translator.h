@@ -3,48 +3,36 @@
 
 #include <ros/ros.h>
 #include "sensor_msgs/Joy.h"
+#include "rowboat_msgs/ControlPWMList.h"
+#include <vector>
 
 namespace rowboat1
 {
     class ControllerTranslator
     {
       public:
-        ControllerTranslator(ros::NodeHandle nh);
+        ControllerTranslator(int argc, char** argv);
         ~ControllerTranslator();
-        void start();
 
       private:
-        void mainLoop();
-
-        // TEMPORARY-- this should receive geometry_msgs/Twist
-        void xBoxControlReceivedCB(const sensor_msgs::Joy::ConstPtr& msg);
-//        void controlReceivedCB(const geometry_msgs::TwistStamped::ConstPtr& msg);
-
-        std::vector<signed char> translateJoy(const sensor_msgs::Joy msg);
+        void controlReceivedCB(const sensor_msgs::Joy::ConstPtr& msg);
+        rowboat_msgs::ControlPWMList::Ptr translateJoy(const sensor_msgs::Joy::ConstPtr& msg);
+        float calculateCommandPercent(float axis);
         
-        
-        ros::NodeHandle nh_;
+        ros::NodeHandle n_;
         ros::Subscriber controlSub_;
         ros::Publisher controlPub_;
-        ros::Publisher homePub_;
         
-        unsigned short loopRateHz_;
         float minJoyStick_, maxJoyStick_;
         float minTrigger_, maxTrigger_;
-        // geometry_msgs::TwistStamped
-        std::vector<sensor_msgs::Joy> controlMsgBuffer_;
-        
+        float minPWMCommand_, maxPWMCommand_;
+        float powerScale_;
 
-        // TODO: put all translation into a config.
-        // This is sloppily specific.
-        unsigned char forward_left_channel;
-        unsigned char forward_right_channel;
-
-        // COMMENTED OUT TO SIMPLIFY FOR HACKDAY
-//        unsigned char up_left_channel;
-//        unsigned char up_right_channel;
-//        unsigned char side_front_channel;
-//        unsigned char side_back_channel;
+        // thruster# -> PWM port 
+        std::vector<int> thrusterMap_;
+       
+        std::vector<int> buttons_;
+        std::vector<float> axes_;
               
     };
     
