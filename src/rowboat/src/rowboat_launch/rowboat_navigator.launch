@@ -1,7 +1,9 @@
 <launch>
   <!-- Parameter files -->
+  <param name="enable_statistics" type="bool" value="true" />
 
   <!-- Launch files -->
+  <include file="$(rowboat_launch)/diagnostic_aggregator.launch" />
   <include file="$(find guardian)/guardian.launch" />
   <include file="$(controller_translator)/controller_translator.launch" />
   <include file="$(rowboat_launch)/twist_joy.launch" />
