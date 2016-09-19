@@ -5,5 +5,5 @@ source /opt/ros/indigo/setup.bash
 
 echo " ~~~~### BUILDING WORKSPACE ###~~~~"
 cd /root/rowboat1/src/rowboat
-catkin build --no-color
+catkin_make
 
