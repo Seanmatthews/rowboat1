@@ -1,6 +1,6 @@
 #!/bin/bash
 set -ev
-source /opt/ros/jade/setup.bash
+source /opt/ros/indigo/setup.bash
 # extend this as needed for complete build coverage
 
 echo " ~~~~### BUILDING WORKSPACE ###~~~~"

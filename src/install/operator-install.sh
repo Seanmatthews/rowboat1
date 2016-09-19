@@ -15,5 +15,5 @@ echo "end script" | sudo tee --append $XBOXDRV_CONF
 echo "exec xboxdrv -D --detach-kernel-driver --silent --dbus disabled" | sudo tee --append $XBOXDRV_CONF
 
 # Install ROS packages
-sudo apt-get -y install ros-jade-joy
+sudo apt-get -y install ros-indigo-joy
 

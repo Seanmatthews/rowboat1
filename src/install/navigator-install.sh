@@ -7,7 +7,7 @@ sudo echo "am1_i2c" >> /etc/modules
 sudo adduser odroid i2c
 
 # ROS packages
-sudo apt-get -y install ros-jade-razor_imu_9dof
+sudo apt-get -y install ros-indigo-razor_imu_9dof
 
 # Post-install instructions
 echo "REBOOT THE MACHINE!"
