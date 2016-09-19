@@ -17,7 +17,7 @@ RUN apt-get install -y --no-install-recommends libusb-1.0-0-dev
 RUN echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list
 RUN apt-key adv --keyserver hkp://pool.sks-keyservers.net --recv-key 0xB01FA116
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends ros-jade-ros-base
+RUN apt-get install -y --no-install-recommends ros-indigo-ros-base
 RUN rosdep init
 
 # Clean up installation files
@@ -32,7 +32,7 @@ USER odroid
 WORKDIR /home/odroid
 
 # configure ROS (it will give Warning as our UID is same as root, 0)
-RUN echo "source /opt/ros/jade/setup.bash" >> /home/odroid/.bash_aliases
+RUN echo "source /opt/ros/indigo/setup.bash" >> /home/odroid/.bash_aliases
 RUN bash -c "source /home/odroid/.bashrc && rosdep update"
 
 # Copy in git repo
