@@ -27,20 +27,20 @@ RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Add odroid user (w/ root privileges)
-RUN useradd -ou 0 -g 0 -m odroid
+# RUN useradd -ou 0 -g 0 -m odroid
 
 # switch to new user
-USER odroid
-WORKDIR /home/odroid
+USER root
+WORKDIR /root
 
 # configure ROS (it will give Warning as our UID is same as root, 0)
-RUN echo "source /opt/ros/indigo/setup.bash" >> /home/odroid/.bash_aliases
-RUN bash -c "source /home/odroid/.bashrc && rosdep update"
+RUN echo "source /opt/ros/indigo/setup.bash" >> /root/.bash_aliases
+RUN bash -c "source /root/.bashrc && rosdep update"
 
 # Copy in git repo
-COPY . /home/odroid/rowboat1
+COPY . /root/rowboat1
 
 # build everything
-RUN /home/odroid/rowboat1/src/install/ci-build.sh
+RUN /root/rowboat1/src/install/ci-build.sh
 
 CMD ["/bin/bash"]
