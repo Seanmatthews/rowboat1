@@ -5,5 +5,5 @@ source /opt/ros/indigo/setup.bash
 
 echo " ~~~~### BUILDING WORKSPACE ###~~~~"
 cd /home/odroid/rowboat1/src/rowboat
-catkin_make
+catkin build
 
