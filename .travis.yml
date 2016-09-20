@@ -29,6 +29,7 @@ before_install:
   - travis_retry sudo apt-get install -y --no-install-recommends qemu-user-static binfmt-support cowsay
   - PATH=$PATH:/usr/games
   - sudo update-binfmts --display qemu-arm
+  
 
 # build code
 install:

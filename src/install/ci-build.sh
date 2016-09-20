@@ -5,5 +5,6 @@ source /opt/ros/indigo/setup.bash
 
 echo " ~~~~### BUILDING WORKSPACE ###~~~~"
 cd /root/rowboat1/src/rowboat
+git submodule update --init --recursive
 catkin_make
 
