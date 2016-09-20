@@ -19,6 +19,8 @@ RUN apt-key adv --keyserver hkp://pool.sks-keyservers.net --recv-key 0xB01FA116
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends ros-indigo-ros-base
 RUN apt-get install -y --no-install-recommends ros-indigo-roslint
+RUN apt-get install -y --no-install-recommends ros-indigo-image-common
+RUN apt-get install -y --no-install-recommends ros-indigo-diagnostics
 RUN apt-get install -y --no-install-recommends python-rosinstall
 RUN apt-get install -y --no-install-recommends python-catkin-tools
 RUN rosdep init
