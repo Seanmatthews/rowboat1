@@ -33,7 +33,7 @@ before_install:
 
 # build code
 install:
-#  - uname a
+  - uname -a
   - travis_retry docker run --rm -it ubergarm/armhf-ubuntu:trusty uname -a
 
 # optional stuff here
