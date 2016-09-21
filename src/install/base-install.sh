@@ -1,13 +1,17 @@
 #!/bin/bash
+
+PKG="sudo apt-get -y --no-install-recommends install"
+ROS_VERSION="indigo"
+
 sudo apt-get update
 
-sudo apt-get -y install git
-sudo apt-get -y install emacs
-sudo apt-get -y install build-essential
-sudo apt-get -y install python-dev
-sudo apt-get -y install g++
-sudo apt-get -y install python-smbus
-sudo apt-get -y install i2c-tools
+${PKG} git
+${PKG} emacs
+${PKG} build-essential
+${PKG} python-dev
+${PKG} g++
+${PKG} python-smbus
+${PKG} i2c-tools
 
 # This fixes roscd (maybe something to do with running ROS as root?)
 # http://answers.ros.org/question/53353/autocomplete-not-working-anymore/?comment=72208#comment-72208
@@ -17,18 +21,31 @@ echo "export LC_ALL="C"" >> ~/.bashrc
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 sudo apt-key adv --keyserver hkp://pool.sks-keyservers.net --recv-key 0xB01FA116
 sudo apt-get update
-sudo apt-get -y install ros-indigo-ros-base
+${PKG} "ros-${ROS_VERSION}-ros-base"
 sudo rosdep init
 rosdep update
 echo "source /opt/ros/indigo/setup.bash" >> ~/.bashrc
-sudo apt-get -y install python-rosinstall
-sudo apt-get -y install python-catkin-tools
+${PKG} python-rosinstall python-catkin-tools
 
 # Pololu
-sudo apt-get -y install libusb-1.0-0-dev
+${PKG} libusb-1.0-0-dev
 # maybe not needed 
-sudo apt-get -y install mono-gmcs 
-sudo apt-get -y install mono-devel 
-sudo apt-get -y install libmono-winforms2.0-cil
+${PKG} mono-gmcs 
+${PKG} mono-devel 
+${PKG} libmono-winforms2.0-cil
+
+# FFMpeg -- ffmpeg not in Ubuntu 14.04. Change to apt-get if upgrading to 16.*
+$PKG} autoconf automake build-essential libass-dev libfreetype6-dev \
+  libsdl1.2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libxcb1-dev \
+  libxcb-shm0-dev libxcb-xfixes0-dev pkg-config texinfo zlib1g-dev
+
+git clone https://github.com/FFmpeg/FFmpeg.git
+cd FFmpeg
+git checkout tags/n3.1.3
+./configure
+make
+sudo make install
+cd ..
+rm -rf FFmpeg
 
 exit
