@@ -4,9 +4,12 @@
 #include <string>
 #include <map>
 #include <typeinfo>
+
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
+
+#include "gopro_hero/gopro_hero_commands.hpp"
 
 
 namespace rowboat1 {
@@ -22,6 +25,7 @@ namespace rowboat1 {
 
         GoProHero() {
             base_ = GoProHeroCommands::commandBase();
+            mode_ = GoProHeroCommands::Mode::Video;
         }
         
         ~GoProHero() {}
@@ -31,9 +35,9 @@ namespace rowboat1 {
         void setMode(Mode m) {
             mode_ = m;
             switch (m) {
-            case Mode::VIDEO: sendSetting("10/1"); break;
-            case Mode::PHOTO: sendSetting("21/1"); break;
-            case Mode::MULTISHOT: sendSetting("34/1"); break;
+            case GoProHeroCommands::Mode::VIDEO: sendSetting("10/1"); break;
+            case GoProHeroCommands::Mode::PHOTO: sendSetting("21/1"); break;
+            case GoProHeroCommands::Mode::MULTISHOT: sendSetting("34/1"); break;
             default: break;
             }
         }
@@ -107,39 +111,24 @@ namespace rowboat1 {
         }
 
         
-        void sendSetting(std::string s) {
-            send(base_ + "setting/" + s);
-        }
-
-        
-        void sendCommand(std::string s) {
-            send(base_ + "command/" + s);
-        }
+        void sendSetting(std::string s) { send(base_ + "setting/" + s); }
+        void sendCommand(std::string s) { send(base_ + "command/" + s); }
 
         // TODO accept and parse output for success/failure--
         // maybe have this func return actual string, then sendCommand/sendSetting
         // can parse based on their respectie expected outputs.
         // TODO catch exceptions
         bool send(std::string s) {
-//            curlpp::Cleanup cleaner;
-//            curlpp::Easy req;
-//            req.setOpt<Url>(s);
-//            req.perform();
+            curlpp::Cleanup cleaner;
+            curlpp::Easy req;
+            req.setOpt<Url>(s);
+            req.perform();
             std::cout << s << std::endl;
             return true;
         }
         
         const std::string base_;
         Mode mode_;
-
-        const std::map<std::string, std::string> videoModeVal_ = {
-            {typeid(WhiteBalance).name(), "11/"},
-            {typeid(Color).name(), "12/"},
-            {typeid(ISOLimit).name(), "13/"},
-            {typeid(Sharpness).name(), "14/"},
-            {typeid(EV).name(), "15/"}
-        };
-    
     };
 }
 

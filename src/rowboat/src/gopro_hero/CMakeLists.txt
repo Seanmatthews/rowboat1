@@ -43,13 +43,6 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * uncomment the generate_messages entry below
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
-
 ## Generate services in the 'srv' folder
 # add_service_files(
 #   FILES
@@ -62,12 +55,6 @@ find_package(catkin REQUIRED COMPONENTS
 #   FILES
 #   Action1.action
 #   Action2.action
-# )
-
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   sensor_msgs#   std_msgs
 # )
 
 ################################################
@@ -100,10 +87,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES gopro_hero
-#  CATKIN_DEPENDS roscpp sensor_msgs std_msgs
-#  DEPENDS system_lib
+  CATKIN_DEPENDS roscpp sensor_msgs std_msgs
+  DEPENDS curl curlpp
 )
 
 ###########
@@ -118,8 +105,9 @@ include_directories(
 )
 
 ## Declare a C++ library
+## !! If we're not doing header only
 # add_library(gopro_hero
-#   src/${PROJECT_NAME}/gopro_hero.cpp
+#  src/${PROJECT_NAME}/gopro_hero.cpp 
 # )
 
 ## Add cmake target dependencies of the library
@@ -128,7 +116,7 @@ include_directories(
 # add_dependencies(gopro_hero ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(gopro_hero_node src/gopro_hero_node.cpp)
+add_executable(gopro_hero_node src/gopro_hero_node.cpp main.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -161,11 +149,11 @@ include_directories(
 # )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+ install(DIRECTORY include/${PROJECT_NAME}/
+   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+   FILES_MATCHING PATTERN "*.hpp"
+   PATTERN ".git" EXCLUDE
+)
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
