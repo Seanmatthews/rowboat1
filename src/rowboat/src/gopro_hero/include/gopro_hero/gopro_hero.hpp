@@ -5,9 +5,15 @@
 #include <map>
 #include <typeinfo>
 
-#include <curlpp/cURLpp.hpp>
-#include <curlpp/Easy.hpp>
-#include <curlpp/Options.hpp>
+//#include <curlpp/cURLpp.hpp>
+//#include <curlpp/Easy.hpp>
+//#include <curlpp/Options.hpp>
+#include <curl/curl.h>
+#include <json/json.h>
+#include <json/reader.h>
+#include <sstream>
+#include <iomanip>
+#include <string>
 
 #include "gopro_hero/gopro_hero_commands.hpp"
 
@@ -30,6 +36,54 @@ namespace rowboat1 {
         
         ~GoProHero() {}
 
+        std::string zeroPaddedIntString(std::string num, int pad) {
+            std::ostringstream ss;
+            ss << std::setw(pad) << std::setfill('0') << num;
+            return ss.str()
+        }
+
+        // Lazy get -- move boilerplate to util function
+        void getCurrentImages(std::vector<std::vector<char> >& images, long timeout = 1) {
+            Json::Value root;
+            Json::Reader reader;
+            CURL* curl = curl_easy_init();
+            CURLcode code(CURLE_FAILED_INIT);
+            std::string buffer;
+            
+            if (curl)
+            {
+                if (CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_URL, "http://10.5.5.9/gp/gpMediaList"))
+                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &curlWriteCallback))
+                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout))
+                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer)))
+                {
+                    code = curl_easy_perform(curl);
+                }
+
+                curl_easy_cleanup(curl);
+            }
+
+            if (!buffer.empty() && reader.parse(buffer, root))
+            {
+                const Json::Value media = root["media"][0]["fs"];
+                const Json::Value lastVal = media[media.size() - 1];
+
+                // TODO Check that it's a JPG
+                
+                int startNum = std::stoi(lastVal["b"]);
+                int endNum = std::stoi(lastVal["l"]);
+                for (int i=startNum; i<=endNum; ++i)
+                {
+                    std::string filename =
+                        zeroPaddedIntString(lastVal["g"], 3) +
+                        zeroPaddedIntString(lastVal["b"], 4) + ".JPG";
+                    std::vector<char> image;
+                    getImage(filename, image);
+                    capturedImages_.push_back(image);
+                }
+                                
+            }
+        }
 
         // Is this correct? Setting mode == turning mode on?
         void setMode(Mode m) {
@@ -129,6 +183,7 @@ namespace rowboat1 {
         
         const std::string base_;
         Mode mode_;
+        std::vector<std::vector<char> > capturedImages_;
     };
 }
 
