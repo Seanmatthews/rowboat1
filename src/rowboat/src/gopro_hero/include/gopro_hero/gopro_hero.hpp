@@ -29,9 +29,10 @@ namespace rowboat1 {
             MULTISHOT
         };
 
-        GoProHero() {
+        GoProHero() :
+            commsTimeoutSeconds_(2) {
             base_ = GoProHeroCommands::commandBase();
-            mode_ = GoProHeroCommands::Mode::Video;
+            mode_ = GoProHeroCommands::Mode::PHOTO;
         }
         
         ~GoProHero() {}
@@ -42,28 +43,17 @@ namespace rowboat1 {
             return ss.str()
         }
 
+
+
         // Lazy get -- move boilerplate to util function
         void getCurrentImages(std::vector<std::vector<char> >& images, long timeout = 1) {
             Json::Value root;
             Json::Reader reader;
-            CURL* curl = curl_easy_init();
-            CURLcode code(CURLE_FAILED_INIT);
-            std::string buffer;
-            
-            if (curl)
-            {
-                if (CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_URL, "http://10.5.5.9/gp/gpMediaList"))
-                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &curlWriteCallback))
-                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout))
-                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer)))
-                {
-                    code = curl_easy_perform(curl);
-                }
+            std::string mediaList;
 
-                curl_easy_cleanup(curl);
-            }
+            if (!curlReadUrl("http://10.5.5.9/gp/gpMediaList", mediaList)) return;
 
-            if (!buffer.empty() && reader.parse(buffer, root))
+            if (!buffer.empty() && reader.parse(mediaList, root))
             {
                 const Json::Value media = root["media"][0]["fs"];
                 const Json::Value lastVal = media[media.size() - 1];
@@ -180,10 +170,38 @@ namespace rowboat1 {
             std::cout << s << std::endl;
             return true;
         }
+
+
+        size_t curlWriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+            ((std::string*)userp)->append((char*)contents, size * nmemb);
+            return size * nmemb;
+        }
+
+        bool curlReadUrl(std::string url, std::string& text) {
+            CURL* curl = curl_easy_init();
+            CURLcode code(CURLE_FAILED_INIT);
+            std::string buffer;
+            
+            if (curl)
+            {
+                if (CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_URL, url.c_str()))
+                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION,
+                                                            &GoProHero::curlWriteCallback))
+                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_TIMEOUT, commsTimeoutSeconds_))
+                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &text)))
+                {
+                    code = curl_easy_perform(curl);
+                }
+
+                code = curl_easy_cleanup(curl);
+            }
+            return code == CURLE_OK;
+        }
         
         const std::string base_;
         Mode mode_;
         std::vector<std::vector<char> > capturedImages_;
+        long commsTimeoutSeconds_;
     };
 }
 
