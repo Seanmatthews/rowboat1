@@ -12,6 +12,7 @@ ${PKG} python-dev
 ${PKG} g++
 ${PKG} python-smbus
 ${PKG} i2c-tools
+${PKG} cmake
 
 # This fixes roscd (maybe something to do with running ROS as root?)
 # http://answers.ros.org/question/53353/autocomplete-not-working-anymore/?comment=72208#comment-72208
@@ -38,6 +39,10 @@ ${PKG} libmono-winforms2.0-cil
 ${PKG} autoconf automake build-essential libass-dev libfreetype6-dev \
   libsdl1.2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libxcb1-dev \
   libxcb-shm0-dev libxcb-xfixes0-dev pkg-config texinfo zlib1g-dev
+
+# OpenCV
+${PKG} libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+${PKG} python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
 
 git clone https://github.com/FFmpeg/FFmpeg.git
 cd FFmpeg
