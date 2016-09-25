@@ -19,6 +19,13 @@ namespace rowboat1 {
         NATIVE = 4
     };
 
+    enum class Orientation
+    {
+        GYRO = 0,
+        UP = 1,
+        DOWN = 2
+    };
+
     enum class Color
     {
         GOPRO = 0,
@@ -176,7 +183,7 @@ namespace rowboat1 {
         // 
         template<typename T>
         static std::string to_string(T x) {
-            return std::to_string(GoProHero::to_type(x));
+            return std::to_string(GoProHeroCommands::to_type(x));
         }
 
         // 
@@ -187,12 +194,12 @@ namespace rowboat1 {
         static const std::map<std::string, std::string> multiModeVals;
     };
 
-    const std::map<std::string, unsigned short> GoProHeroCommands::videoModeVals = {
-        {typeid(WhiteBalance).name(), 11},
-        {typeid(Color).name(), 12},
-        {typeid(ISOLimit).name(), 13},
-        {typeid(Sharpness).name(), 14},
-        {typeid(EV).name(), 15}
+    const std::map<std::string, std::string> GoProHeroCommands::videoModeVals = {
+        {typeid(WhiteBalance).name(), "11/"},
+        {typeid(Color).name(), "12/"},
+        {typeid(ISOLimit).name(), "13/"},
+        {typeid(Sharpness).name(), "14/"},
+        {typeid(EV).name(), "15/"}
     };
 
     const std::map<std::string, std::string> GoProHeroCommands::photoModeVals = {
