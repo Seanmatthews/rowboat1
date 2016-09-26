@@ -107,7 +107,7 @@ namespace rowboat1 {
         void shutter(bool on) { sendCommand("shutter?p=" + std::to_string((on ? 1 : 0))); }
         void orientation(Orientation o) { sendSetting("52/" + GoProHeroCommands::to_string(o)); }
         void ledBlink(LEDBlink b) { sendSetting("55/" + GoProHeroCommands::to_string(b)); }
-        void beep(Beep b) { sendSetting("56/" + GoProHeroCommands::to_string(b)); }
+        void beepVolume(BeepVolume b) { sendSetting("56/" + GoProHeroCommands::to_string(b)); }
         void lcdDisplay(bool on) { sendSetting("72/" + std::to_string(on ? 1 : 0)); }
         void onScreenDisplay(bool on) { sendSetting("58/" + std::to_string(on ? 1 : 0)); }
         void lcdBrightness(LCDBrightness b) { sendSetting("49/" + GoProHeroCommands::to_string(b)); }
@@ -129,14 +129,14 @@ namespace rowboat1 {
         void videoStreamWindowSize(VideoStreamWindowSize s) { sendSetting("64/" + GoProHeroCommands::to_string(s)); }
         void videoResolution(VideoResolution v) { sendSetting("2/" + GoProHeroCommands::to_string(v)); }
         void videoFrameRate(VideoFrameRate f) { sendSetting("3/" + GoProHeroCommands::to_string(f)); }
-        void videoFov(VideoFOV f) { sendSetting("4/" + GoProHeroCommands::to_string(f)); }
+        void videoFOV(VideoFOV f) { sendSetting("4/" + GoProHeroCommands::to_string(f)); }
         void videoLowLight(bool on) { sendSetting("8/" + std::to_string(on ? 1 : 0)); }
         void videoLoopDuration(VideoLoopDuration v) { sendSetting("6/" + GoProHeroCommands::to_string(v)); }
         void videoPhotoInterval(VideoPhotoInterval v) { sendSetting("7/" + GoProHeroCommands::to_string(v)); }
         void videoTagMoment() { sendCommand("storage/tag_moment"); }
         void multiBurstRate(MultiBurstRate m) { sendSetting("29/" + GoProHeroCommands::to_string(m)); }
-        void multiTimeLapseInterval(MultiTimelapseInterval m) { sendSetting("31/" + GoProHeroCommands::to_string(m)); }
-        void multiTimeLapseInterval(MultiNightlapseInterval m) { sendSetting("32/" + GoProHeroCommands::to_string(m)); }
+        void multiTimeLapseInterval(MultiTimeLapseInterval m) { sendSetting("31/" + GoProHeroCommands::to_string(m)); }
+        void multiTimeLapseInterval(MultiNightLapseInterval m) { sendSetting("32/" + GoProHeroCommands::to_string(m)); }
         
         // Mode-specific settings -- depend on current mode
         void whiteBalance(WhiteBalance w) { sendModalSetting(w); }

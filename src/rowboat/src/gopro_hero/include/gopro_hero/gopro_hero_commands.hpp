@@ -161,7 +161,10 @@ namespace rowboat1 {
 
     enum class PhotoResolution
     {
-
+        WIDE_12MP = 0,
+        WIDE_7MP = 1,
+        STANDARD_7MP = 2,
+        WIDE_5MP = 3
     };
 
     enum class VideoFrameRate
@@ -211,40 +214,69 @@ namespace rowboat1 {
 
     enum class LEDBlink
     {
-
+        OFF = 0,
+        BLINK2 = 1,
+        BLINK4 = 2
     };
 
-    enum class Beep
+    enum class BeepVolume
     {
-
+        FULL = 0,
+        HALF = 1,
+        OFF = 2
     };
 
     enum class LCDBrightness
     {
-
+        HIGH = 0,
+        MEDIUM = 1,
+        LOW = 2
     };
 
     enum class LCDSleepTimeout
     {
-
+        NEVER = 0,
+        M1 = 1,
+        M2 = 2,
+        M3 = 3,
+        M5 = 4
     };
 
     enum class AutoOffTime
     {
-
+        NEVER = 0,
+        M1 = 1,
+        M2 = 2,
+        M3 = 3,
+        M5 = 4
     };
 
     enum class VideoStreamBitRate
     {
-
+        K250 = 250000,
+        K400 = 400000,
+        K600 = 600000,
+        K700 = 700000,
+        K800 = 800000,
+        M1 = 1000000,
+        M1_2 = 1200000,
+        M1_6 = 1600000,
+        M2 = 2000000,
+        M2_4 = 2400000
     };
 
     enum class VideoStreamWindowSize
     {
-
+        DEFAULT = 0,
+        W240 = 1,
+        W240_34 = 2,
+        W240_12 = 3,
+        W480 = 4,
+        W480_34 = 5,
+        W480_12 = 6
     };
 
-    enum class MultiTimelapseInterval
+    enum class MultiTimeLapseInterval
     {
         S0_5 = 0,
         S1 = 1,
@@ -255,7 +287,7 @@ namespace rowboat1 {
         S60 = 60
     };
 
-    enum class MultiNightlapseInterval
+    enum class MultiNightLapseInterval
     {
         CONTINUOUS = 0,
         S4 = 4,

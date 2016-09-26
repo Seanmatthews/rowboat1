@@ -70,7 +70,7 @@ namespace rowboat1
             if ("shutter" == name) gp_.shutter(val);
             else if ("orientation" == name) gp_.orientation(static_cast<Orientation>(val));
             else if ("ledBlink" == name) gp_.ledBlink(static_cast<LEDBlink>(val));
-            else if ("beep" == name) gp_.beep(static_cast<Beep>(val));
+            else if ("beepVolume" == name) gp_.beepVolume(static_cast<BeepVolume>(val));
             else if ("lcdDisplay" == name) gp_.lcdDisplay(val);
             else if ("onScreenDisplay" == name) gp_.onScreenDisplay(val); 
             else if ("lcdBrightness" == name) gp_.lcdBrightness(static_cast<LCDBrightness>(val));
@@ -85,11 +85,28 @@ namespace rowboat1
                 gp_.videoFrameRate(static_cast<VideoFrameRate>(val));
                 loopRateHz_ = val + 1; // Adjust loop speed to slightly more than FPS 
             }
-            
-            
-                //
-                // MORE TO COME
-                //
+            else if ("videoResolution" == name) gp_.videoResolution(static_cast<VideoResolution>(val));
+            else if ("videoFrameRate" == name) gp_.videoFrameRate(static_cast<VideoFrameRate>(val));
+            else if ("videoFOV" == name) gp_.videoFOV(static_cast<VideoFOV>(val));
+            else if ("videoLowLight" == name) gp_.videoLowLight(val);
+            else if ("videoLoopDuration" == name) gp_.videoLoopDuration(static_cast<VideoLoopDuration>(val));
+            else if ("videoPhotoInterval" == name) gp_.videoPhotoInterval(static_cast<VideoPhotoInterval>(val));
+            else if ("videoTagMoment" == name) gp_.videoTagMoment();
+
+            // Multishot only
+            else if ("multiBurstRate" == name) gp_.multiBurstRate(static_cast<MultiBurstRate>(val));
+            else if ("multiTimeLapseInterval" == name) gp_.multiTimeLapseInterval(static_cast<MultiTimeLapseInterval>(val));
+            else if ("multiNightLapseInterval" == name) gp_.multiNightLapseInterval(static_cast<MultiNightLapseInterval>(val));
+            // Mode-specific
+            else if ("whiteBalance" == name) gp_.whiteBalance(static_cast<WhiteBalance>(val));
+            else if ("color" == name) gp_.color(static_cast<Color>(val));
+            else if ("isoLimit" == name) gp_.isoLimit(static_cast<ISOLimit>(val));
+            else if ("isoMin" == name) gp_.isoMin(static_cast<ISOMin>(val));
+            else if ("sharpness" == name) gp_.sharpness(static_cast<Sharpness>(val));
+            else if ("ev" == name) gp_.ev(static_cast<EV>(val));
+            else if ("exposure" == name) gp_.exposure(static_cast<Exposure>(val));
+            else if ("spotMeter" == name) gp_.spotMeter(static_cast<SpotMeter>(val));
+            else if ("photoResolution" == name) gp_.photoResolution(static_cast<PhotoResolution>(val));
         }
     }
 
