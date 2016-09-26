@@ -2,6 +2,8 @@
 #define GOPRO_HERO_NODE_HPP_
 
 #include <ros/ros.h>
+#include "std_msgs/Int8.h"
+#include "gopro_hero/gopro_hero.hpp"
 #include "gopro_hero_msgs/Shutter.h"
 #include "gopro_hero_msgs/SettingsMap.h"
 
@@ -20,16 +22,16 @@ namespace rowboat1
     private:
         void mainLoop();
 
-        void modeCB(const std_msgs::Int::ConstPtr& msg);
+        void modeCB(const std_msgs::Int8::ConstPtr& msg);
         void cameraSettingsCB(const gopro_hero_msgs::SettingsMap::ConstPtr& msg);
-        void triggerShutterCB(const gopro_hero_msgs::Shutter::Request& req,
-                              const gopro_hero_msgs::Shutter::Response& rsp);
+        bool triggerShutterCB(gopro_hero_msgs::Shutter::Request& req,
+                              gopro_hero_msgs::Shutter::Response& rsp);
 
         ros::NodeHandle nh_;
         ros::Publisher imageStreamPub_;
         ros::Subscriber modeSub_;
         ros::Subscriber cameraSettingsSub_;
-        ros::Subscriber shutterTriggerSub_;
+        ros::ServiceServer shutterTriggerSrv_;
 
         GoProHero gp_;
     };

@@ -1,5 +1,7 @@
 #include "gopro_hero/gopro_hero_node.hpp"
+#include "sensor_msgs/Image.h"
 
+using namespace std;
 using namespace ros;
 
 /**
@@ -16,19 +18,19 @@ using namespace ros;
 namespace rowboat1
 {
 
-    void GoProHeroNode::GoProHeroNode(NodeHandle nh) :
+    GoProHeroNode::GoProHeroNode(NodeHandle nh) :
         nh_(nh)
     {
-        funcMap_["WhiteBalance"] = &GoProHero::whiteBalance;
+
     }
 
-    void GoProHeroNode::~GoProHeroNode() { }
+    GoProHeroNode::~GoProHeroNode() { }
 
     void GoProHeroNode::init()
     {
         modeSub_ = nh_.subscribe("mode", 1, &GoProHeroNode::modeCB, this);
         cameraSettingsSub_ = nh_.subscribe("camera_settings", 1, &GoProHeroNode::cameraSettingsCB, this);
-        shutterTriggerSub_ = nh_.subscribe("trigger_shutter", 10, &GoProHeroNode::triggerShutterCB, this);
+        shutterTriggerSrv_ = nh_.advertiseService("trigger_shutter", &GoProHeroNode::triggerShutterCB, this);
     }
     
     void GoProHeroNode::start()
@@ -48,14 +50,14 @@ namespace rowboat1
             }
 
             // Adjust loop to coincide with GoPro FPS
-            ros::sleep(50);
+//            ros::sleep(50);
             ros::spinOnce();
         }
     }
 
-    void GoProHeroNode::modeCB(const std_msgs::Int::ConstPtr& msg)
+    void GoProHeroNode::modeCB(const std_msgs::Int8::ConstPtr& msg)
     {
-        gp_.setMode(static_cast<Mode>(msg->data));
+        gp_.setMode(static_cast<GoProHero::Mode>(msg->data));
     }
 
     // NOTE no checks for proper enum value-- cast will occur regardless
@@ -64,39 +66,46 @@ namespace rowboat1
         for (auto s : msg->settings)
         {
             auto val = s.id;
-            switch(s.name)
-            {
-            case "shutter": gp_.shutter(val); break;
-            case "orientation": gp_.orientation(static_cast<Orientation>(val)); break;
-            case "ledBlink": gp_.ledBlink(static_cast<LEDBlink>(val)); break;
-            case "beep": gp_.beep(static_cast<Beep>(val)); break;
-            case "lcdDisplay": gp_.lcdDisplay(val); break;
-            case "onScreenDisplay": gp_.onScreenDisplay(val); break;
-            case "lcdBrightness": gp_.lcdBrightness(static_cast<LCDBrightness>(val)); break;
-            case "lcdLock": gp_.lcdLock(val); break;
-            case "lcdSleepTimeout": gp_.lcdSleepTimeout(static_cast<LCDSleepTimeout>(val)); break;
-            case "autoOffTime": gp_.autoOffTime(static_cast<AutoOffTime>(val)); break;
+            auto name = s.name;
+            
+            if ("shutter" == name) gp_.shutter(val);
+            else if ("orientation" == name) gp_.orientation(static_cast<Orientation>(val));
+            else if("ledBlink" == name) gp_.ledBlink(static_cast<LEDBlink>(val));
+            else if("beep" == name) gp_.beep(static_cast<Beep>(val));
+            else if("lcdDisplay" == name) gp_.lcdDisplay(val);
+            else if("onScreenDisplay" == name) gp_.onScreenDisplay(val); 
+            else if("lcdBrightness" == name) gp_.lcdBrightness(static_cast<LCDBrightness>(val));
+            else if("lcdLock" == name) gp_.lcdLock(val);
+            else if("lcdSleepTimeout" == name) gp_.lcdSleepTimeout(static_cast<LCDSleepTimeout>(val));
+            else if( "autoOffTime" == name) gp_.autoOffTime(static_cast<AutoOffTime>(val));
 
-            case "streamBitRate": gp_.streamBitRate(static_cast<StreamBitRate>(val)); break;
+            else if("streamBitRate" == name) gp_.streamBitRate(static_cast<StreamBitRate>(val)); 
 
                 //
                 // MORE TO COME
                 //
-                
-            default: break;
-            }
         }
     }
 
 
     // A convenience service for triggering the shutter, switching mode beforehand,
     // and receiving mode-specific outputs.
-    void GoProHeroNode::triggerShutterCB(const gopro_hero_msgs::Shutter::Request& req,
-                                         const gopro_hero_msgs::Shutter::Response& rsp)
+    bool GoProHeroNode::triggerShutterCB(gopro_hero_msgs::Shutter::Request& req,
+                                         gopro_hero_msgs::Shutter::Response& rsp)
     {
-        gp_.setMode(req.multi ? Mode::MULTI : Mode::PHOTO);
+        vector<vector<unsigned char> > images;
+        gp_.setMode(req.multishot ? GoProHero::Mode::MULTISHOT : GoProHero::Mode::PHOTO);
         gp_.shutter(true);
-        rsp.images = gp_.currentImageList();
+        gp_.currentImages(images);
+        
+        // Convert image bytes to sensor_msgs/Image
+        for (auto i : images)
+        {
+            sensor_msgs::Image rosImg;
+            copy(i.begin(), i.end(), back_inserter(rosImg.data));
+            rsp.images.push_back(rosImg);
+        }
+        
         return true;
     }
 

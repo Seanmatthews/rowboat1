@@ -1,5 +1,12 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.8)
 project(gopro_hero)
+
+# Cmake 3.1+
+#set(CMAKE_CXX_STANDARD 11)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Cmake 2.8
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -13,6 +20,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+# find_library(CURL curl /usr/lib/arm-linux-gnueabihf/)
+# find_library(JSONCPP jsoncpp /usr/lib/arm-linux-gnueabihf/)
 
 
 ################################################
@@ -48,18 +57,21 @@ catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES gopro_hero
   CATKIN_DEPENDS roscpp sensor_msgs std_msgs
-  DEPENDS curl curlpp
+  DEPENDS curl jsoncpp
 )
 
 ###########
 ## Build ##
 ###########
 
+link_directories(/usr/lib/arm-linux-gnueabihf/)
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  include
 )
 
 ## Declare a C++ library
@@ -74,16 +86,18 @@ include_directories(
 # add_dependencies(gopro_hero ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(gopro_hero_node src/gopro_hero_node.cpp main.cpp)
+add_executable(gopro_hero_node src/gopro_hero_node.cpp src/main.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(gopro_hero_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(gopro_hero_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(gopro_hero_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(gopro_hero_node
+  ${catkin_LIBRARIES}
+  curl
+  jsoncpp
+)
 
 #############
 ## Install ##

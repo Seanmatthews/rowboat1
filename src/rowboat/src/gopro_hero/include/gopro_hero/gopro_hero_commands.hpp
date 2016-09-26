@@ -170,6 +170,42 @@ namespace rowboat1 {
         SPOTON = 1
     };
 
+    enum class LEDBlink
+    {
+
+    };
+
+    enum class Beep
+    {
+
+    };
+
+    enum class LCDBrightness
+    {
+
+    };
+
+    enum class LCDSleepTimeout
+    {
+
+    };
+
+    enum class AutoOffTime
+    {
+
+    };
+
+    enum class StreamBitRate
+    {
+
+    };
+
+    enum class StreamWindowSize
+    {
+
+    };
+
+    
 
     class GoProHeroCommands {
     public:
@@ -189,25 +225,23 @@ namespace rowboat1 {
         // 
         static const std::string commandBase() { return "http://10.5.5.9/gp/gpControl/"; }
 
-        static const std::map<std::string, std::string> videoModeVals;
-        static const std::map<std::string, std::string> photoModeVals;
-        static const std::map<std::string, std::string> multiModeVals;
-    };
-
-    const std::map<std::string, std::string> GoProHeroCommands::videoModeVals = {
-        {typeid(WhiteBalance).name(), "11/"},
-        {typeid(Color).name(), "12/"},
-        {typeid(ISOLimit).name(), "13/"},
-        {typeid(Sharpness).name(), "14/"},
-        {typeid(EV).name(), "15/"}
-    };
-
-    const std::map<std::string, std::string> GoProHeroCommands::photoModeVals = {
-
-    };
-
-    const std::map<std::string, std::string> GoProHeroCommands::multiModeVals = {
-
+        static const std::map<std::string, std::string> videoModeVals() {
+            return {
+                {typeid(WhiteBalance).name(), "11/"},
+                {typeid(Color).name(), "12/"},
+                {typeid(ISOLimit).name(), "13/"},
+                {typeid(Sharpness).name(), "14/"},
+                {typeid(EV).name(), "15/"}
+            };
+        }
+   
+        static const std::map<std::string, std::string> photoModeVals() {
+            return {};
+        }
+        
+        static const std::map<std::string, std::string> multiModeVals() {
+            return {};
+        }
     };
 
 }

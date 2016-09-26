@@ -26,8 +26,8 @@ namespace rowboat1 {
         };
 
         GoProHero() :
-            commsTimeoutSeconds_(2) {
-            //base_ = GoProHeroCommands::commandBase();
+            commsTimeoutSeconds_(2),
+            isStreaming_(false) {
             mode_ = Mode::PHOTO;
             curl_global_init(CURL_GLOBAL_ALL);
         }
@@ -36,6 +36,10 @@ namespace rowboat1 {
             curl_global_cleanup();
         }
 
+        bool isStreaming() {
+            return isStreaming_;
+        }
+        
         std::string zeroPaddedIntString(std::string num, int pad) {
             std::ostringstream ss;
             ss << std::setw(pad) << std::setfill('0') << num;
@@ -45,7 +49,7 @@ namespace rowboat1 {
 
 
         // Lazy get -- move boilerplate to util function
-        void getCurrentImages(std::vector<std::vector<char> >& images, long timeout = 1) {
+        void currentImages(std::vector<std::vector<unsigned char> >& images, long timeout = 5) {
             Json::Value root;
             Json::Reader reader;
             std::string mediaList;
@@ -66,9 +70,9 @@ namespace rowboat1 {
                     std::string filename =
                         zeroPaddedIntString(lastVal["g"].asString(), 3) +
                         zeroPaddedIntString(lastVal["b"].asString(), 4) + ".JPG";
-                    std::vector<char> image;
-                    curlGetImage(filename, image);
-                    capturedImages_.push_back(image);
+                    std::vector<unsigned char> image;
+                    curlGetBytes(filename, image);
+                    images.push_back(image);
                 }
                                 
             }
@@ -87,14 +91,14 @@ namespace rowboat1 {
 
         // Global functions
         void shutter(bool on) { sendCommand("shutter?p=" + std::to_string((on ? 1 : 0))); }
-/*
+
         void orientation(Orientation o) { sendSetting("52/" + GoProHeroCommands::to_string(o)); }
         void ledBlink(LEDBlink b) { sendSetting("55/" + GoProHeroCommands::to_string(b)); }
         void beep(Beep b) { sendSetting("56/" + GoProHeroCommands::to_string(b)); }
-        void lcdDisplay(bool on) { sendSetting("72/" + (on ? "1" : "0")); }
-        void onScreenDisplay(bool on) { sendSetting("58/" + (on ? "1" : "0")); }
+        void lcdDisplay(bool on) { sendSetting("72/" + std::to_string(on ? 1 : 0)); }
+        void onScreenDisplay(bool on) { sendSetting("58/" + std::to_string(on ? 1 : 0)); }
         void lcdBrightness(LCDBrightness b) { sendSetting("49/" + GoProHeroCommands::to_string(b)); }
-        void lcdLock(bool on) { sendSetting("50/" + (on ? "1" : "0")); }
+        void lcdLock(bool on) { sendSetting("50/" + std::to_string(on ? 1 : 0)); }
         void lcdSleepTimeout(LCDSleepTimeout t) { sendSetting("51/" + GoProHeroCommands::to_string(t)); }
         void autoOffTime(AutoOffTime a) { sendSetting("59/" + GoProHeroCommands::to_string(a)); }
 
@@ -102,7 +106,7 @@ namespace rowboat1 {
         // Single mode functions
         void streamBitRate(StreamBitRate s) { sendSetting("62/" + GoProHeroCommands::to_string(s)); }
         void streamWindowSize(StreamWindowSize s) { sendSetting("64/" + GoProHeroCommands::to_string(s)); }
-*/
+
         
         // TODO
         // tag moment
@@ -129,22 +133,22 @@ namespace rowboat1 {
             switch (mode_) {
             case Mode::VIDEO:
             {
-                auto it = GoProHeroCommands::videoModeVals.find(typeid(T).name());
-                if (it != GoProHeroCommands::videoModeVals.end())
+                auto it = GoProHeroCommands::videoModeVals().find(typeid(T).name());
+                if (it != GoProHeroCommands::videoModeVals().end())
                     sendSetting(it->second + GoProHeroCommands::to_string(s));
                 break;
             }
             case Mode::PHOTO:
             {
-                auto it = GoProHeroCommands::photoModeVals.find(typeid(T).name());
-                if (it != GoProHeroCommands::photoModeVals.end())
+                auto it = GoProHeroCommands::photoModeVals().find(typeid(T).name());
+                if (it != GoProHeroCommands::photoModeVals().end())
                     sendSetting(it->second + GoProHeroCommands::to_string(s));
                 break;
             }
             case Mode::MULTISHOT:
             {
-                auto it = GoProHeroCommands::multiModeVals.find(typeid(T).name());
-                if (it != GoProHeroCommands::multiModeVals.end())
+                auto it = GoProHeroCommands::multiModeVals().find(typeid(T).name());
+                if (it != GoProHeroCommands::multiModeVals().end())
                     sendSetting(it->second + GoProHeroCommands::to_string(s));
                 break;
             }
@@ -167,66 +171,52 @@ namespace rowboat1 {
             return true;
         }
 
-    public:
-        bool curlGetImage(const std::string url, std::vector<char>& image) {
-            std::ostringstream oss;
-            if (curlRequestUrl(url, oss))
+
+        bool curlGetBytes(const std::string url, std::vector<unsigned char>& image) {
+            std::string s;
+            if (curlRequestUrl(url, s))
             {
-                std::string s = oss.str();
                 std::copy(s.begin(), s.end(), std::back_inserter(image));
                 return true;
             }
             return false;
         }
-        
 
-        static size_t curlWriteCallback(void *buf, size_t size, size_t nmemb, void *userp) {
-            if(userp)
-            {
-                std::ostream& os = *static_cast<std::ostream*>(userp);
-                std::streamsize len = size * nmemb;
-                if(os.write(static_cast<char*>(buf), len)) return len;
-            }
-            return 0;
+        
+        static size_t curlWriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+            ((std::string*)userp)->append((char*)contents, size * nmemb);
+            return size * nmemb;
         }
 
+        
         bool curlGetText(const std::string url, std::string& text) {
-            std::ostringstream oss;
-            if (curlRequestUrl(url, oss))
-            {
-                text = oss.str();
-                return true;
-            }
-            return false;
+            return curlRequestUrl(url, text);
         }
         
-        bool curlRequestUrl(const std::string url, std::ostream& os) {
+        bool curlRequestUrl(const std::string url, std::string& readBuffer) {
             CURL* curl = curl_easy_init();
-            CURLcode code(CURLE_FAILED_INIT);
+            CURLcode res(CURLE_FAILED_INIT);
 
-            if (curl)
-            {
-                if (CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION,
-                                                            &GoProHero::curlWriteCallback))
-                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L))
-                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L))
-                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_FILE, &os))
-                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L))
-                    && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_URL, url.c_str())))
-                {
-                    code = curl_easy_perform(curl);
-                }
+            if(curl) {
+                curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+                curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &GoProHero::curlWriteCallback);
+                curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+                curl_easy_setopt(curl, CURLOPT_TIMEOUT, commsTimeoutSeconds_);
+                curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+                res = curl_easy_perform(curl);
                 curl_easy_cleanup(curl);
+
+                std::cout << readBuffer.size() << std::endl;
             }
-            return code == CURLE_OK;
+            return CURLE_OK == res;
         }
 
         
         
         const std::string base_ = GoProHeroCommands::commandBase();
         Mode mode_;
-        std::vector<std::vector<char> > capturedImages_;
         long commsTimeoutSeconds_;
+        bool isStreaming_;
     };
 }
 
