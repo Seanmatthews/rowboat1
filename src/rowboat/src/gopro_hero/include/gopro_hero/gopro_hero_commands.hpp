@@ -96,19 +96,53 @@ namespace rowboat1 {
 
     enum class DefaultBootMode
     {
-
+        VIDEO = 0,
+        PHOTO = 1,
+        MULTISHOT = 2
     };
 
     enum class PrimaryMode
     {
-
+        VIDEO = 0,
+        PHOTO = 1,
+        MULTISHOT = 2
     };
 
-    enum class SecondaryMode
+    enum class VideoSecondaryMode
     {
-
+        VIDEO = 0,
+        TIMELAPSE = 1,
+        PHOTO = 2,
+        LOOPING = 3,
     };
 
+    enum class PhotoSecondaryMode
+    {
+        SINGLE = 0,
+        CONTINUOUS = 1,
+        NIGHT = 2
+    };
+
+    enum class MultishotSecondaryMode
+    {
+        BURST = 0,
+        TIMELAPSE = 1,
+        NIGHTLAPSE = 2
+    };
+
+    enum class MultiBurstRate
+    {
+        B3_1 = 0,
+        B5_1 = 1,
+        B10_1 = 2,
+        B10_2 = 3,
+        B10_3 = 4,
+        B30_1 = 5,
+        B30_2 = 6,
+        B30_3 = 7,
+        B30_6 = 8
+    };
+    
     enum class VideoResolution
     {
         K4 = 1,
@@ -125,7 +159,12 @@ namespace rowboat1 {
         WVGA = 13
     };
 
-    enum class FrameRate
+    enum class PhotoResolution
+    {
+
+    };
+
+    enum class VideoFrameRate
     {
         FPS240 = 0,
         FPS120 = 1,
@@ -140,7 +179,7 @@ namespace rowboat1 {
         FPS12_5 = 12
     };
 
-    enum class FOV
+    enum class VideoFOV
     {
         WIDE = 0,
         MEDIUM = 1,
@@ -195,16 +234,42 @@ namespace rowboat1 {
 
     };
 
-    enum class StreamBitRate
+    enum class VideoStreamBitRate
     {
 
     };
 
-    enum class StreamWindowSize
+    enum class VideoStreamWindowSize
     {
 
     };
 
+    enum class MultiTimelapseInterval
+    {
+        S0_5 = 0,
+        S1 = 1,
+        S2 = 2,
+        S5 = 5,
+        S10 = 10,
+        S30 = 30,
+        S60 = 60
+    };
+
+    enum class MultiNightlapseInterval
+    {
+        CONTINUOUS = 0,
+        S4 = 4,
+        S5 = 5,
+        S10 = 10,
+        S15 = 15,
+        S20 = 20,
+        S30 = 30,
+        M1 = 60,
+        M2 = 120,
+        M5 = 300,
+        M30 = 1800,
+        M60 = 3600
+    };
     
 
     class GoProHeroCommands {

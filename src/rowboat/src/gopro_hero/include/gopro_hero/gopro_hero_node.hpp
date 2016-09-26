@@ -16,7 +16,6 @@ namespace rowboat1
         GoProHeroNode(ros::NodeHandle nh);
         ~GoProHeroNode();
 
-        void init();
         void start();
         
     private:
@@ -34,6 +33,9 @@ namespace rowboat1
         ros::ServiceServer shutterTriggerSrv_;
 
         GoProHero gp_;
+
+        // params
+        unsigned int loopRateHz_;
     };
 }
 

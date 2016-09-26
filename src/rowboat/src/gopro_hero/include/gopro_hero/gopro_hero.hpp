@@ -4,12 +4,14 @@
 #include <string>
 #include <map>
 #include <typeinfo>
-#include <curl/curl.h>
-#include <jsoncpp/json/json.h>
-#include <jsoncpp/json/reader.h>
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 
+#include <curl/curl.h>
+#include <boost/asio.hpp>
+#include <jsoncpp/json/json.h>
+#include <jsoncpp/json/reader.h>
 
 #include "gopro_hero_commands.hpp"
 
@@ -19,15 +21,12 @@ namespace rowboat1 {
     class GoProHero {
     public:
 
-        enum class Mode {
-            VIDEO,
-            PHOTO,
-            MULTISHOT
-        };
+        using Mode = PrimaryMode;
 
         GoProHero() :
             commsTimeoutSeconds_(2),
-            isStreaming_(false) {
+            isStreaming_(false),
+            saveOnDevice_(true) {
             mode_ = Mode::PHOTO;
             curl_global_init(CURL_GLOBAL_ALL);
         }
@@ -82,16 +81,30 @@ namespace rowboat1 {
         void setMode(Mode m) {
             mode_ = m;
             switch (m) {
-            case Mode::VIDEO: sendSetting("10/1"); break;
-            case Mode::PHOTO: sendSetting("21/1"); break;
-            case Mode::MULTISHOT: sendSetting("34/1"); break;
+            case Mode::VIDEO:
+            {
+                sendCommand("mode?p=0"); // set as mode
+                sendSetting("10/1"); // turn on
+                break;
+            }
+            case Mode::PHOTO:
+            {
+                sendCommand("mode?p=1");
+                sendSetting("21/1");
+                break;
+            }
+            case Mode::MULTISHOT:
+            {
+                sendCommand("mode?p=2");
+                sendSetting("34/1");
+                break;
+            }
             default: break;
             }
         }
 
         // Global functions
         void shutter(bool on) { sendCommand("shutter?p=" + std::to_string((on ? 1 : 0))); }
-
         void orientation(Orientation o) { sendSetting("52/" + GoProHeroCommands::to_string(o)); }
         void ledBlink(LEDBlink b) { sendSetting("55/" + GoProHeroCommands::to_string(b)); }
         void beep(Beep b) { sendSetting("56/" + GoProHeroCommands::to_string(b)); }
@@ -101,22 +114,31 @@ namespace rowboat1 {
         void lcdLock(bool on) { sendSetting("50/" + std::to_string(on ? 1 : 0)); }
         void lcdSleepTimeout(LCDSleepTimeout t) { sendSetting("51/" + GoProHeroCommands::to_string(t)); }
         void autoOffTime(AutoOffTime a) { sendSetting("59/" + GoProHeroCommands::to_string(a)); }
-
-
-        // Single mode functions
-        void streamBitRate(StreamBitRate s) { sendSetting("62/" + GoProHeroCommands::to_string(s)); }
-        void streamWindowSize(StreamWindowSize s) { sendSetting("64/" + GoProHeroCommands::to_string(s)); }
-
+        void defaultBootMode(DefaultBootMode d) { sendSetting("53/" + GoProHeroCommands::to_string(d)); }
+        void saveMediaOnDevice(bool yes) { saveOnDevice_ = yes; }
+        void deleteLastTaken() { sendCommand("storage/delete/last"); }
+        void deleteAllMedia() { sendCommand("storage/delete/all"); }
+        void locate(bool on) { sendCommand("system/locate?p=" + std::to_string(on ? 1 : 0)); }
+        void power(bool on, std::array<unsigned char, 6> mac = {}) {
+            if (on) sendMagicPacket(mac);
+            else sendCommand("system/sleep");
+        }
         
-        // TODO
-        // tag moment
-        // pair with RC
-        // locate
-        // delete file
-        // delete last file
-        // reformat sd card
-
-        // Mode-specific
+        // Single mode functions
+        void videoStreamBitRate(VideoStreamBitRate s) { sendSetting("62/" + GoProHeroCommands::to_string(s)); }
+        void videoStreamWindowSize(VideoStreamWindowSize s) { sendSetting("64/" + GoProHeroCommands::to_string(s)); }
+        void videoResolution(VideoResolution v) { sendSetting("2/" + GoProHeroCommands::to_string(v)); }
+        void videoFrameRate(VideoFrameRate f) { sendSetting("3/" + GoProHeroCommands::to_string(f)); }
+        void videoFov(VideoFOV f) { sendSetting("4/" + GoProHeroCommands::to_string(f)); }
+        void videoLowLight(bool on) { sendSetting("8/" + std::to_string(on ? 1 : 0)); }
+        void videoLoopDuration(VideoLoopDuration v) { sendSetting("6/" + GoProHeroCommands::to_string(v)); }
+        void videoPhotoInterval(VideoPhotoInterval v) { sendSetting("7/" + GoProHeroCommands::to_string(v)); }
+        void videoTagMoment() { sendCommand("storage/tag_moment"); }
+        void multiBurstRate(MultiBurstRate m) { sendSetting("29/" + GoProHeroCommands::to_string(m)); }
+        void multiTimeLapseInterval(MultiTimelapseInterval m) { sendSetting("31/" + GoProHeroCommands::to_string(m)); }
+        void multiTimeLapseInterval(MultiNightlapseInterval m) { sendSetting("32/" + GoProHeroCommands::to_string(m)); }
+        
+        // Mode-specific settings -- depend on current mode
         void whiteBalance(WhiteBalance w) { sendModalSetting(w); }
         void color(Color c) { sendModalSetting(c); }
         void isoLimit(ISOLimit i) { sendModalSetting(i); }
@@ -124,7 +146,8 @@ namespace rowboat1 {
         void sharpness(Sharpness s) { sendModalSetting(s); }
         void ev(EV e) { sendModalSetting(e); }
         void exposure(Exposure e) { sendModalSetting(e); }
-//        void photoResolution(PhotoResolution p) { sendModalSetting(p); }
+        void spotMeter(SpotMeter s) { sendModalSetting(s); }
+        void photoResolution(PhotoResolution p) { sendModalSetting(p); }
         
             
     private:
@@ -157,6 +180,25 @@ namespace rowboat1 {
             }
         }
 
+        void sendMagicPacket(std::array<unsigned char, 6> mac) {
+            using namespace boost::asio;
+
+            std::array<unsigned char, 102> buf;
+
+            for (int i=0; i<6; ++i) buf[i] = 0xFF; // 6 bytes
+            for (int i=1; i<17; ++i) memcpy(&buf[i*6], &mac, 6 * sizeof(unsigned char)); // 96 bytes
+
+            // send as UDP packet
+            io_service ioService;
+            ip::udp::socket socket(ioService);
+            ip::udp::endpoint remoteEndpoint;
+//            boost::system::error::error_code err;
+            
+            socket.open(ip::udp::v4());
+            remoteEndpoint = ip::udp::endpoint(ip::address::from_string("10.5.5.9"), 9);
+            socket.send_to(buffer(buf), remoteEndpoint); //, 0, err);
+            socket.close();
+        }
         
         void sendSetting(std::string s) { send(base_ + "setting/" + s); }
         void sendCommand(std::string s) { send(base_ + "command/" + s); }
@@ -217,6 +259,7 @@ namespace rowboat1 {
         Mode mode_;
         long commsTimeoutSeconds_;
         bool isStreaming_;
+        bool saveOnDevice_;
     };
 }
 

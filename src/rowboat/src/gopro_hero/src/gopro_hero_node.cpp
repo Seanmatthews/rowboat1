@@ -19,28 +19,27 @@ namespace rowboat1
 {
 
     GoProHeroNode::GoProHeroNode(NodeHandle nh) :
-        nh_(nh)
+        nh_(nh),
+        loopRateHz_(50)
     {
 
     }
 
     GoProHeroNode::~GoProHeroNode() { }
 
-    void GoProHeroNode::init()
+    
+    void GoProHeroNode::start()
     {
         modeSub_ = nh_.subscribe("mode", 1, &GoProHeroNode::modeCB, this);
         cameraSettingsSub_ = nh_.subscribe("camera_settings", 1, &GoProHeroNode::cameraSettingsCB, this);
         shutterTriggerSrv_ = nh_.advertiseService("trigger_shutter", &GoProHeroNode::triggerShutterCB, this);
-    }
-    
-    void GoProHeroNode::start()
-    {
-
+        mainLoop();
     }
 
     void GoProHeroNode::mainLoop()
     {
-
+        ros::Rate loopRate(loopRateHz_);
+        
         while (ros::ok())
         {
             // Publish new image if we're streaming
@@ -49,8 +48,8 @@ namespace rowboat1
                 
             }
 
-            // Adjust loop to coincide with GoPro FPS
-//            ros::sleep(50);
+
+            loopRate.sleep();
             ros::spinOnce();
         }
     }
@@ -70,17 +69,24 @@ namespace rowboat1
             
             if ("shutter" == name) gp_.shutter(val);
             else if ("orientation" == name) gp_.orientation(static_cast<Orientation>(val));
-            else if("ledBlink" == name) gp_.ledBlink(static_cast<LEDBlink>(val));
-            else if("beep" == name) gp_.beep(static_cast<Beep>(val));
-            else if("lcdDisplay" == name) gp_.lcdDisplay(val);
-            else if("onScreenDisplay" == name) gp_.onScreenDisplay(val); 
-            else if("lcdBrightness" == name) gp_.lcdBrightness(static_cast<LCDBrightness>(val));
-            else if("lcdLock" == name) gp_.lcdLock(val);
-            else if("lcdSleepTimeout" == name) gp_.lcdSleepTimeout(static_cast<LCDSleepTimeout>(val));
-            else if( "autoOffTime" == name) gp_.autoOffTime(static_cast<AutoOffTime>(val));
+            else if ("ledBlink" == name) gp_.ledBlink(static_cast<LEDBlink>(val));
+            else if ("beep" == name) gp_.beep(static_cast<Beep>(val));
+            else if ("lcdDisplay" == name) gp_.lcdDisplay(val);
+            else if ("onScreenDisplay" == name) gp_.onScreenDisplay(val); 
+            else if ("lcdBrightness" == name) gp_.lcdBrightness(static_cast<LCDBrightness>(val));
+            else if ("lcdLock" == name) gp_.lcdLock(val);
+            else if ("lcdSleepTimeout" == name) gp_.lcdSleepTimeout(static_cast<LCDSleepTimeout>(val));
+            else if ( "autoOffTime" == name) gp_.autoOffTime(static_cast<AutoOffTime>(val));
 
-            else if("streamBitRate" == name) gp_.streamBitRate(static_cast<StreamBitRate>(val)); 
-
+            // Video only
+            else if ("videoStreamBitRate" == name) gp_.videoStreamBitRate(static_cast<VideoStreamBitRate>(val)); 
+            else if ("videoFrameRate" == name)
+            {
+                gp_.videoFrameRate(static_cast<VideoFrameRate>(val));
+                loopRateHz_ = val + 1; // Adjust loop speed to slightly more than FPS 
+            }
+            
+            
                 //
                 // MORE TO COME
                 //

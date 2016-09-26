@@ -19,9 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-# find_library(CURL curl /usr/lib/arm-linux-gnueabihf/)
-# find_library(JSONCPP jsoncpp /usr/lib/arm-linux-gnueabihf/)
+find_package(Boost REQUIRED COMPONENTS system)
 
 
 ################################################
@@ -68,10 +66,10 @@ link_directories(/usr/lib/arm-linux-gnueabihf/)
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
   include
+  ${Boost_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
