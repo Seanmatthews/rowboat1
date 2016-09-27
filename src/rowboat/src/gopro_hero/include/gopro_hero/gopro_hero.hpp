@@ -13,6 +13,14 @@
 #include <jsoncpp/json/json.h>
 #include <jsoncpp/json/reader.h>
 
+extern "C"
+{
+#include <libavdevice/avdevice.h>
+#include <libswscale/swscale.h>
+#include <libavformat/avformat.h>
+#include <libavformat/avio.h>
+}
+
 #include "gopro_hero_commands.hpp"
 
 
@@ -34,6 +42,9 @@ namespace rowboat1 {
             curl_global_cleanup();
         }
 
+        // Sets an external frame processor 
+        void setStreamFrameCallback( void(*func)(int,int,int,uint8_t*) ) { processFrameFunc_ = func; }
+        
         bool isStreaming() {
             return isStreaming_;
         }
@@ -254,12 +265,100 @@ namespace rowboat1 {
             return true; //CURLE_OK == res;
         }
 
+
+        // http://hasanaga.info/tag/ffmpeg-libavcodec-av_read_frame-example/
+        // http://stackoverflow.com/questions/10715170/receiving-rtsp-stream-using-ffmpeg-library
+        void streamThreadFunc() {
+            AVCodecContext *pCodecCtx;
+            AVFormatContext *pFormatCtx;
+            AVCodec *pCodec;
+            AVFrame *pFrame, *pFrameRGB;
+            AVPixelFormat pFormat = AV_PIX_FMT_BGR24;
+            AVPacket packet;
+            int videoStream = -1;
+            uint8_t *buffer;
+            int numBytes;
+            int res;
+            int frameFinished;
+            std::string src = "udp://:8554";
+            
+            av_register_all();
+            avdevice_register_all();
+            avcodec_register_all();
+            avformat_network_init();
+
+            if (avformat_open_input(&pFormatCtx, src.c_str(), NULL, NULL) != 0) return;
+            if (avformat_find_stream_info(pFormatCtx, NULL) < 0) return;
+
+            av_dump_format(pFormatCtx, 0, src.c_str(), 0);
+            for (int i=0; i<pFormatCtx->nb_streams; ++i)
+            {
+                if (pFormatCtx->streams[i]->codec->coder_type == AVMEDIA_TYPE_VIDEO)
+                {
+                    videoStream = i;
+                    break;
+                }
+            }
+
+            if (videoStream == -1) return;
+
+            pCodecCtx = pFormatCtx->streams[videoStream]->codec;
+            pCodec = avcodec_find_decoder(pCodecCtx->codec_id);
+
+            if (pCodec == NULL) return;
+            if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) return;
+
+            pFrame = avcodec_alloc_frame();
+            pFrameRGB = avcodec_alloc_frame();
+
+            numBytes = avpicture_get_size(pFormat, pCodecCtx->width, pCodecCtx->height);
+            buffer = (uint8_t*)av_malloc(numBytes*sizeof(uint8_t));
+            avpicture_fill((AVPicture*)pFrameRGB, buffer, pFormat, pCodecCtx->width, pCodecCtx->height);
+
+
+            while(res = av_read_frame(pFormatCtx,&packet)>=0)
+            {
+                if(packet.stream_index == videoStream)
+                {
+                    avcodec_decode_video2(pCodecCtx,pFrame,&frameFinished,&packet);
+
+                    if(frameFinished)
+                    {
+
+                        struct SwsContext * img_convert_ctx;
+                        img_convert_ctx = sws_getCachedContext(NULL,pCodecCtx->width, pCodecCtx->height,
+                                                               pCodecCtx->pix_fmt, pCodecCtx->width,
+                                                               pCodecCtx->height, AV_PIX_FMT_BGR24,
+                                                               SWS_BICUBIC, NULL, NULL,NULL);
+                        sws_scale(img_convert_ctx, ((AVPicture*)pFrame)->data,
+                                  ((AVPicture*)pFrame)->linesize, 0, pCodecCtx->height,
+                                  ((AVPicture *)pFrameRGB)->data, ((AVPicture *)pFrameRGB)->linesize);
+
+                        // Callback function set by parent
+                        processFrameFunc_(pFrame->height, pFrame->width, numBytes, pFrameRGB->data[0]);
+
+                        av_free_packet(&packet);
+                        sws_freeContext(img_convert_ctx);
+                    }
+                }
+            }
+
+            av_free_packet(&packet);
+            avcodec_close(pCodecCtx);
+            av_free(pFrame);
+            av_free(pFrameRGB);
+            avformat_close_input(&pFormatCtx);
+        }
         
+
+
+
         
         const std::string base_ = GoProHeroCommands::commandBase();
         Mode mode_;
         bool isStreaming_;
         bool saveOnDevice_;
+        void (*processFrameFunc_)(int,int,int,uint8_t*);
     };
 }
 

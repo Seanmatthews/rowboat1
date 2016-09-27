@@ -95,6 +95,9 @@ target_link_libraries(gopro_hero_node
   ${catkin_LIBRARIES}
   curl
   jsoncpp
+  avcodec
+  swscale
+  avdevice
 )
 
 #############

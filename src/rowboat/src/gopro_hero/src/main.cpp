@@ -8,6 +8,10 @@ int main(int argc, char* argv[])
     ros::init(argc, argv, "GoProHero");
     ros::NodeHandle nh;
     GoProHeroNode* node = new GoProHeroNode(nh);
-    node->start();
+
+    ros::AsyncSpinner spinner(2);
+    spinner.start();
+    ros::waitForShutdown();
+//    node->start();
     return 0;
 }

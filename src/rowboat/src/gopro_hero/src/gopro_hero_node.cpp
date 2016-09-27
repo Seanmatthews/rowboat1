@@ -1,5 +1,5 @@
 #include "gopro_hero/gopro_hero_node.hpp"
-#include "sensor_msgs/Image.h"
+#include "sensor_msgs/CompressedImage.h"
 
 using namespace std;
 using namespace ros;
@@ -20,44 +20,46 @@ namespace rowboat1
 
     GoProHeroNode::GoProHeroNode(NodeHandle nh) :
         nh_(nh),
-        loopRateHz_(50)
+        isStreaming_(false)
     {
 
     }
 
-    GoProHeroNode::~GoProHeroNode() { }
+    GoProHeroNode::~GoProHeroNode()
+    {
+        if (isStreaming_) streamThread_.interrupt();
+    }
 
     
-    void GoProHeroNode::start()
+    void GoProHeroNode::init()
     {
         modeSub_ = nh_.subscribe("mode", 1, &GoProHeroNode::modeCB, this);
+        imageStreamPub_ = nh_.advertise<sensor_msgs::CompressedImage>("stream", 5);
+        toggleVideoStream_ = nh_.subscribe("toggle_video_stream", 1, &GoProHeroNode::toggleVideoStreamCB, this);
         cameraSettingsSub_ = nh_.subscribe("camera_settings", 1, &GoProHeroNode::cameraSettingsCB, this);
         shutterTriggerSrv_ = nh_.advertiseService("trigger_shutter", &GoProHeroNode::triggerShutterCB, this);
-        mainLoop();
+
+        gp_.setStreamFrameCallback(&GoProHeroNode::processStreamFrameCB);
     }
 
-    void GoProHeroNode::mainLoop()
-    {
-        ros::Rate loopRate(loopRateHz_);
-        
-        while (ros::ok())
-        {
-            // Publish new image if we're streaming
-            if (gp_.isStreaming())
-            {
-                
-            }
-
-
-            loopRate.sleep();
-            ros::spinOnce();
-        }
-    }
-
+    
+    // Callback for setting the GoPro's mode
     void GoProHeroNode::modeCB(const std_msgs::Int8::ConstPtr& msg)
     {
         gp_.setMode(static_cast<GoProHero::Mode>(msg->data));
     }
+
+
+    void GoProHeroNode::toggleVideoStreamCB(const std_msgs::Bool::ConstPtr& msg)
+    {
+        if (msg->data != isStreaming_)
+        {
+            isStreaming_ = !isStreaming_;
+//            if (msg->data) streamThread_ = boost::thread(&GoProHeroNode::streamThreadFunc);
+//            else streamThread_.interrupt();
+        }
+    }
+    
 
     // NOTE no checks for proper enum value-- cast will occur regardless
     void GoProHeroNode::cameraSettingsCB(const gopro_hero_msgs::SettingsMap::ConstPtr& msg)
@@ -80,11 +82,7 @@ namespace rowboat1
 
             // Video only
             else if ("videoStreamBitRate" == name) gp_.videoStreamBitRate(static_cast<VideoStreamBitRate>(val)); 
-            else if ("videoFrameRate" == name)
-            {
-                gp_.videoFrameRate(static_cast<VideoFrameRate>(val));
-                loopRateHz_ = val + 1; // Adjust loop speed to slightly more than FPS 
-            }
+            else if ("videoFrameRate" == name) gp_.videoFrameRate(static_cast<VideoFrameRate>(val));
             else if ("videoResolution" == name) gp_.videoResolution(static_cast<VideoResolution>(val));
             else if ("videoFrameRate" == name) gp_.videoFrameRate(static_cast<VideoFrameRate>(val));
             else if ("videoFOV" == name) gp_.videoFOV(static_cast<VideoFOV>(val));
@@ -121,10 +119,10 @@ namespace rowboat1
         gp_.shutter(true);
         gp_.currentImages(images);
         
-        // Convert image bytes to sensor_msgs/Image
+        // Convert image bytes to sensor_msgs/CompressedImage
         for (auto i : images)
         {
-            sensor_msgs::Image rosImg;
+            sensor_msgs::CompressedImage rosImg;rosImg.format = "jpeg"; // TODO parameterize
             copy(i.begin(), i.end(), back_inserter(rosImg.data));
             rsp.images.push_back(rosImg);
         }
@@ -132,4 +130,11 @@ namespace rowboat1
         return true;
     }
 
+
+    // Function called in a new thread when streaming is started
+    void GoProHeroNode::processStreamFrameCB(int width, int height, int numBytes, uint8_t* bytes)
+    {
+    
+    }
+    
 }
