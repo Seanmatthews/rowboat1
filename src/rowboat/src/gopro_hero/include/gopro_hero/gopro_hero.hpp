@@ -24,7 +24,6 @@ namespace rowboat1 {
         using Mode = PrimaryMode;
 
         GoProHero() :
-            commsTimeoutSeconds_(2),
             isStreaming_(false),
             saveOnDevice_(true) {
             mode_ = Mode::PHOTO;
@@ -48,12 +47,13 @@ namespace rowboat1 {
 
 
         // Lazy get -- move boilerplate to util function
-        void currentImages(std::vector<std::vector<unsigned char> >& images, long timeout = 5) {
+        void currentImages(std::vector<std::vector<unsigned char> >& images, long timeout = 10) {
             Json::Value root;
             Json::Reader reader;
             std::string mediaList;
 
-            if (!curlGetText("http://10.5.5.9/gp/gpMediaList", mediaList)) return;
+            if (!curlGetText("http://10.5.5.9/gp/gpMediaList", mediaList, 2)) return;
+            std::cout << mediaList << std::endl;
 
             if (!mediaList.empty() && reader.parse(mediaList, root))
             {
@@ -66,11 +66,12 @@ namespace rowboat1 {
                 int endNum = std::stoi(lastVal["l"].asString());
                 for (int i=startNum; i<=endNum; ++i)
                 {
-                    std::string filename =
+                    std::string path = "http://10.5.5.9/videos/DCIM/100GOPRO/G" +
                         zeroPaddedIntString(lastVal["g"].asString(), 3) +
-                        zeroPaddedIntString(lastVal["b"].asString(), 4) + ".JPG";
+                        zeroPaddedIntString(std::to_string(i), 4) + ".JPG";
+                    
                     std::vector<unsigned char> image;
-                    curlGetBytes(filename, image);
+                    curlGetBytes(path, image, timeout);
                     images.push_back(image);
                 }
                                 
@@ -136,7 +137,7 @@ namespace rowboat1 {
         void videoTagMoment() { sendCommand("storage/tag_moment"); }
         void multiBurstRate(MultiBurstRate m) { sendSetting("29/" + GoProHeroCommands::to_string(m)); }
         void multiTimeLapseInterval(MultiTimeLapseInterval m) { sendSetting("31/" + GoProHeroCommands::to_string(m)); }
-        void multiTimeLapseInterval(MultiNightLapseInterval m) { sendSetting("32/" + GoProHeroCommands::to_string(m)); }
+        void multiNightLapseInterval(MultiNightLapseInterval m) { sendSetting("32/" + GoProHeroCommands::to_string(m)); }
         
         // Mode-specific settings -- depend on current mode
         void whiteBalance(WhiteBalance w) { sendModalSetting(w); }
@@ -209,14 +210,14 @@ namespace rowboat1 {
         // TODO catch exceptions
         bool send(std::string s) {
             std::string empty;
-            curlGetText(s, empty);
+            curlGetText(s, empty, 2);
             return true;
         }
 
 
-        bool curlGetBytes(const std::string url, std::vector<unsigned char>& image) {
+        bool curlGetBytes(const std::string url, std::vector<unsigned char>& image, long timeout = 10) {
             std::string s;
-            if (curlRequestUrl(url, s))
+            if (curlRequestUrl(url, s, timeout))
             {
                 std::copy(s.begin(), s.end(), std::back_inserter(image));
                 return true;
@@ -231,11 +232,11 @@ namespace rowboat1 {
         }
 
         
-        bool curlGetText(const std::string url, std::string& text) {
+        bool curlGetText(const std::string url, std::string& text, long timeout = 10) {
             return curlRequestUrl(url, text);
         }
         
-        bool curlRequestUrl(const std::string url, std::string& readBuffer) {
+        bool curlRequestUrl(const std::string url, std::string& readBuffer, long timeout = 10) {
             CURL* curl = curl_easy_init();
             CURLcode res(CURLE_FAILED_INIT);
 
@@ -243,21 +244,20 @@ namespace rowboat1 {
                 curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
                 curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &GoProHero::curlWriteCallback);
                 curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-                curl_easy_setopt(curl, CURLOPT_TIMEOUT, commsTimeoutSeconds_);
+                curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
                 curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
                 res = curl_easy_perform(curl);
                 curl_easy_cleanup(curl);
 
                 std::cout << readBuffer.size() << std::endl;
             }
-            return CURLE_OK == res;
+            return true; //CURLE_OK == res;
         }
 
         
         
         const std::string base_ = GoProHeroCommands::commandBase();
         Mode mode_;
-        long commsTimeoutSeconds_;
         bool isStreaming_;
         bool saveOnDevice_;
     };
