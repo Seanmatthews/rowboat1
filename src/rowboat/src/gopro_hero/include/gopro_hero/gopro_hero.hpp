@@ -10,6 +10,7 @@
 
 #include <curl/curl.h>
 #include <boost/asio.hpp>
+#include <boost/thread/thread.hpp>
 #include <jsoncpp/json/json.h>
 #include <jsoncpp/json/reader.h>
 
@@ -283,73 +284,85 @@ namespace rowboat1 {
             int res;
             int frameFinished;
             std::string src = "udp://:8554";
-            
-            av_register_all();
-            avdevice_register_all();
-            avcodec_register_all();
-            avformat_network_init();
 
-            if (avformat_open_input(&pFormatCtx, src.c_str(), NULL, NULL) != 0) return;
-            if (avformat_find_stream_info(pFormatCtx, NULL) < 0) return;
-
-            av_dump_format(pFormatCtx, 0, src.c_str(), 0);
-            for (int i=0; i<pFormatCtx->nb_streams; ++i)
+            try
             {
-                if (pFormatCtx->streams[i]->codec->coder_type == AVMEDIA_TYPE_VIDEO)
+                boost::this_thread::disable_interruption di1;
+                
+                av_register_all();
+                avdevice_register_all();
+                avcodec_register_all();
+                avformat_network_init();
+                
+                if (avformat_open_input(&pFormatCtx, src.c_str(), NULL, NULL) != 0) return;
+                if (avformat_find_stream_info(pFormatCtx, NULL) < 0) return;
+                
+                av_dump_format(pFormatCtx, 0, src.c_str(), 0);
+                for (int i=0; i<pFormatCtx->nb_streams; ++i)
                 {
-                    videoStream = i;
-                    break;
-                }
-            }
-
-            if (videoStream == -1) return;
-
-            pCodecCtx = pFormatCtx->streams[videoStream]->codec;
-            pCodec = avcodec_find_decoder(pCodecCtx->codec_id);
-
-            if (pCodec == NULL) return;
-            if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) return;
-
-            pFrame = avcodec_alloc_frame();
-            pFrameRGB = avcodec_alloc_frame();
-
-            numBytes = avpicture_get_size(pFormat, pCodecCtx->width, pCodecCtx->height);
-            buffer = (uint8_t*)av_malloc(numBytes*sizeof(uint8_t));
-            avpicture_fill((AVPicture*)pFrameRGB, buffer, pFormat, pCodecCtx->width, pCodecCtx->height);
-
-
-            while(res = av_read_frame(pFormatCtx,&packet)>=0)
-            {
-                if(packet.stream_index == videoStream)
-                {
-                    avcodec_decode_video2(pCodecCtx,pFrame,&frameFinished,&packet);
-
-                    if(frameFinished)
+                    if (pFormatCtx->streams[i]->codec->coder_type == AVMEDIA_TYPE_VIDEO)
                     {
-
-                        struct SwsContext * img_convert_ctx;
-                        img_convert_ctx = sws_getCachedContext(NULL,pCodecCtx->width, pCodecCtx->height,
-                                                               pCodecCtx->pix_fmt, pCodecCtx->width,
-                                                               pCodecCtx->height, AV_PIX_FMT_BGR24,
-                                                               SWS_BICUBIC, NULL, NULL,NULL);
-                        sws_scale(img_convert_ctx, ((AVPicture*)pFrame)->data,
-                                  ((AVPicture*)pFrame)->linesize, 0, pCodecCtx->height,
-                                  ((AVPicture *)pFrameRGB)->data, ((AVPicture *)pFrameRGB)->linesize);
-
-                        // Callback function set by parent
-                        processFrameFunc(pFrame->height, pFrame->width, numBytes, pFrameRGB->data[0]);
-
-                        av_free_packet(&packet);
-                        sws_freeContext(img_convert_ctx);
+                        videoStream = i;
+                        break;
+                    }
+                }
+                
+                if (videoStream == -1) return;
+                
+                pCodecCtx = pFormatCtx->streams[videoStream]->codec;
+                pCodec = avcodec_find_decoder(pCodecCtx->codec_id);
+                
+                if (pCodec == NULL) return;
+                if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) return;
+                
+                pFrame = avcodec_alloc_frame();
+                pFrameRGB = avcodec_alloc_frame();
+                
+                numBytes = avpicture_get_size(pFormat, pCodecCtx->width, pCodecCtx->height);
+                buffer = (uint8_t*)av_malloc(numBytes*sizeof(uint8_t));
+                avpicture_fill((AVPicture*)pFrameRGB, buffer, pFormat, pCodecCtx->width, pCodecCtx->height);
+                
+                
+                while(res = av_read_frame(pFormatCtx,&packet)>=0)
+                {
+                    boost::this_thread::restore_interruption ri(di1);
+                    boost::this_thread::interruption_point();
+                    {
+                        boost::this_thread::disable_interruption di2;
+                    
+                        if(packet.stream_index == videoStream)
+                        {
+                            avcodec_decode_video2(pCodecCtx,pFrame,&frameFinished,&packet);
+                            
+                            if(frameFinished)
+                            {
+                                struct SwsContext * img_convert_ctx;
+                                img_convert_ctx = sws_getCachedContext(NULL,pCodecCtx->width, pCodecCtx->height,
+                                                                       pCodecCtx->pix_fmt, pCodecCtx->width,
+                                                                       pCodecCtx->height, AV_PIX_FMT_BGR24,
+                                                                       SWS_BICUBIC, NULL, NULL,NULL);
+                                sws_scale(img_convert_ctx, ((AVPicture*)pFrame)->data,
+                                          ((AVPicture*)pFrame)->linesize, 0, pCodecCtx->height,
+                                          ((AVPicture *)pFrameRGB)->data, ((AVPicture *)pFrameRGB)->linesize);
+                                
+                                // Callback function set by parent
+                                processFrameFunc(pFrame->height, pFrame->width, numBytes, pFrameRGB->data[0]);
+                                
+                                av_free_packet(&packet);
+                                sws_freeContext(img_convert_ctx);
+                            }
+                        }
                     }
                 }
             }
-
-            av_free_packet(&packet);
-            avcodec_close(pCodecCtx);
-            av_free(pFrame);
-            av_free(pFrameRGB);
-            avformat_close_input(&pFormatCtx);
+            catch (boost::thread_interrupted const&)
+            {
+                av_free_packet(&packet);
+                avcodec_close(pCodecCtx);
+                av_free(pFrame);
+                av_free(pFrameRGB);
+                avformat_close_input(&pFormatCtx);
+            }
         }
         
 
