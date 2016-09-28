@@ -98,6 +98,8 @@ target_link_libraries(gopro_hero_node
   avcodec
   swscale
   avdevice
+  avutil
+  avformat
 )
 
 #############

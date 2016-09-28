@@ -43,7 +43,7 @@ namespace rowboat1 {
         }
 
         // Sets an external frame processor 
-        void setStreamFrameCallback( void(*func)(int,int,int,uint8_t*) ) { processFrameFunc_ = func; }
+//        void setStreamFrameCallback( void(*func)(int,int,int,uint8_t*) ) { processFrameFunc_ = func; }
         
         bool isStreaming() {
             return isStreaming_;
@@ -266,9 +266,11 @@ namespace rowboat1 {
         }
 
 
+    public:
+        
         // http://hasanaga.info/tag/ffmpeg-libavcodec-av_read_frame-example/
         // http://stackoverflow.com/questions/10715170/receiving-rtsp-stream-using-ffmpeg-library
-        void streamThreadFunc() {
+        static void streamThreadFunc( void (*processFrameFunc)(int,int,int,uint8_t*) ) {
             AVCodecContext *pCodecCtx;
             AVFormatContext *pFormatCtx;
             AVCodec *pCodec;
@@ -335,7 +337,7 @@ namespace rowboat1 {
                                   ((AVPicture *)pFrameRGB)->data, ((AVPicture *)pFrameRGB)->linesize);
 
                         // Callback function set by parent
-                        processFrameFunc_(pFrame->height, pFrame->width, numBytes, pFrameRGB->data[0]);
+                        processFrameFunc(pFrame->height, pFrame->width, numBytes, pFrameRGB->data[0]);
 
                         av_free_packet(&packet);
                         sws_freeContext(img_convert_ctx);
@@ -353,12 +355,12 @@ namespace rowboat1 {
 
 
 
-        
+    private:        
         const std::string base_ = GoProHeroCommands::commandBase();
         Mode mode_;
         bool isStreaming_;
         bool saveOnDevice_;
-        void (*processFrameFunc_)(int,int,int,uint8_t*);
+//        void (*processFrameFunc_)(int,int,int,uint8_t*);
     };
 }
 

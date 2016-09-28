@@ -38,8 +38,6 @@ namespace rowboat1
         toggleVideoStream_ = nh_.subscribe("toggle_video_stream", 1, &GoProHeroNode::toggleVideoStreamCB, this);
         cameraSettingsSub_ = nh_.subscribe("camera_settings", 1, &GoProHeroNode::cameraSettingsCB, this);
         shutterTriggerSrv_ = nh_.advertiseService("trigger_shutter", &GoProHeroNode::triggerShutterCB, this);
-
-        gp_.setStreamFrameCallback(&GoProHeroNode::processStreamFrameCB);
     }
 
     
@@ -55,8 +53,9 @@ namespace rowboat1
         if (msg->data != isStreaming_)
         {
             isStreaming_ = !isStreaming_;
-//            if (msg->data) streamThread_ = boost::thread(&GoProHeroNode::streamThreadFunc);
-//            else streamThread_.interrupt();
+            if (msg->data) streamThread_ = boost::thread(&GoProHero::streamThreadFunc,
+                                                         &GoProHeroNode::processStreamFrameCB);
+            else streamThread_.interrupt();
         }
     }
     
@@ -134,7 +133,7 @@ namespace rowboat1
     // Function called in a new thread when streaming is started
     void GoProHeroNode::processStreamFrameCB(int width, int height, int numBytes, uint8_t* bytes)
     {
-    
+        
     }
     
 }
