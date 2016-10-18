@@ -138,6 +138,7 @@ namespace rowboat1 {
         }
         
         // Single mode functions
+        void videoStreamStart() { send(base_ + "execute/?p1=gpStream&a1=proto_v2&c1=restart"); }
         void videoStreamBitRate(VideoStreamBitRate s) { sendSetting("62/" + GoProHeroCommands::to_string(s)); }
         void videoStreamWindowSize(VideoStreamWindowSize s) { sendSetting("64/" + GoProHeroCommands::to_string(s)); }
         void videoResolution(VideoResolution v) { sendSetting("2/" + GoProHeroCommands::to_string(v)); }
@@ -273,7 +274,7 @@ namespace rowboat1 {
         // http://stackoverflow.com/questions/10715170/receiving-rtsp-stream-using-ffmpeg-library
         static void streamThreadFunc( void (*processFrameFunc)(int,int,int,uint8_t*) ) {
             AVCodecContext *pCodecCtx;
-            AVFormatContext *pFormatCtx;
+            AVFormatContext *pFormatCtx = NULL;
             AVCodec *pCodec;
             AVFrame *pFrame, *pFrameRGB;
             AVPixelFormat pFormat = AV_PIX_FMT_BGR24;

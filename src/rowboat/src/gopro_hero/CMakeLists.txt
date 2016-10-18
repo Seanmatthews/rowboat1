@@ -19,8 +19,8 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 ## System dependencies are found with CMake's conventions
-find_package(Boost REQUIRED COMPONENTS system)
-
+find_package(Boost REQUIRED COMPONENTS thread system)
+find_package(OpenCV REQUIRED)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -70,6 +70,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   include
   ${Boost_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -84,7 +85,7 @@ include_directories(
 # add_dependencies(gopro_hero ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(gopro_hero_node src/gopro_hero_node.cpp src/main.cpp)
+add_executable(gopro_hero_node src/gopro_hero_stream.cpp src/gopro_hero_node.cpp src/main.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -93,6 +94,7 @@ add_dependencies(gopro_hero_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 ## Specify libraries to link a library or executable target against
 target_link_libraries(gopro_hero_node
   ${catkin_LIBRARIES}
+  ${OpenCV_LIBS}
   curl
   jsoncpp
   avcodec

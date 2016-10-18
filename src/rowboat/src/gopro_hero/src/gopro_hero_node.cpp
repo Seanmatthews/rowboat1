@@ -133,7 +133,7 @@ namespace rowboat1
     // Function called in a new thread when streaming is started
     void GoProHeroNode::processStreamFrameCB(int width, int height, int numBytes, uint8_t* bytes)
     {
-        
+        ROS_INFO_STREAM("Received " << numBytes << " from stream.");
     }
     
 }
