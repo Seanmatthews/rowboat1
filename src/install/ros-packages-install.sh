@@ -18,6 +18,9 @@ ${PKG} "${ROSVER}-camera-info-manager"
 # Navigation
 ${PKG} "${ROSVER}-razor_imu_9dof"
 
+# Using old vision_opencv repo as submodule
+# OpenCV + Vision
+# ${PKG} "${ROSVER}-vision-opencv"
 
 # Make all local workspaces and add paths to workspace
 echo "source $ROWBOAT_INSTALL_DIR/rowboat/devel/setup.bash" >> ~/.bashrc
