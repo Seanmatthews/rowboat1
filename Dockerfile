@@ -9,7 +9,7 @@ based upon ubergarm/armhf-ubuntu:trusty. It runs on an Odroid XU4 (ARM) computer
 #	&& rm -rf /var/lib/apt/lists/*
 
 # Base Packages
-RUN sh /root/rowboat1/src/install/base-install.sh
+RUN /root/rowboat1/src/install/base-install.sh
 #RUN apt-get update
 #RUN apt-get install -y --no-install-recommends git
 #RUN apt-get install -y --no-install-recommends build-essential
@@ -19,7 +19,7 @@ RUN sh /root/rowboat1/src/install/base-install.sh
 #RUN apt-get install -y --no-install-recommends libusb-1.0-0-dev
 
 # Various Specific Source Packages
-RUN sh /root/rowboat1/src/install/ros-packages-install.sh
+RUN /root/rowboat1/src/install/ros-packages-install.sh
 #RUN echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list
 #RUN apt-key adv --keyserver hkp://pool.sks-keyservers.net --recv-key 0xB01FA116
 #RUN apt-get update
