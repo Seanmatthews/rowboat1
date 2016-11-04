@@ -56,7 +56,7 @@ RUN echo "export LC_ALL="C"" >> ~/.bashrc
 # Various Specific Source Packages
 RUN echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list
 RUN apt-key adv --keyserver hkp://pool.sks-keyservers.net --recv-key 0xB01FA116
-RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends 
+RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
      ros-indigo-ros-base \
      ros-indigo-roslint \
      ros-indigo-image-common \
