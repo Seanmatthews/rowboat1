@@ -31,6 +31,12 @@ based upon ubergarm/armhf-ubuntu:trusty. It runs on an Odroid XU4 (ARM) computer
 #RUN apt-get install -y --no-install-recommends python-catkin-tools
 #RUN rosdep init
 
+# Copy in git repo
+COPY . /root/rowboat1
+RUN /root/rowboat1/src/install/base-install.sh
+RUN /root/rowboat1/src/install/ros-packages-install.sh
+
+
 # Clean up installation files
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -46,11 +52,6 @@ WORKDIR /root
 RUN echo "source /opt/ros/indigo/setup.bash" >> /root/.bash_aliases
 RUN bash -c "source /root/.bashrc && rosdep update"
 
-# Copy in git repo
-COPY . /root/rowboat1
-
-RUN /root/rowboat1/src/install/base-install.sh
-RUN /root/rowboat1/src/install/ros-packages-install.sh
 
 # build everything
 #RUN /root/rowboat1/src/install/ci-build.sh
