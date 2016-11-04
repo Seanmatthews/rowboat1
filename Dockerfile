@@ -40,7 +40,7 @@ RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommend
     texinfo \
     zlib1g-dev \
     libcurlpp-dev \
-    libculpp0
+    libcurlpp0
 
 RUN git clone https://github.com/FFmpeg/FFmpeg.git \
     cd FFmpeg; git checkout tags/n3.1.3; \
