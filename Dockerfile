@@ -34,8 +34,9 @@ based upon ubergarm/armhf-ubuntu:trusty. It runs on an Odroid XU4 (ARM) computer
 # Copy in git repo
 COPY . /root/rowboat1
 CMD ["/root/rowboat1/src/install/base-install.sh"]
+CMD ["/root/rowboat1/src/install/ros-packages-install.sh"]
 #RUN /root/rowboat1/src/install/base-install.sh
-RUN /root/rowboat1/src/install/ros-packages-install.sh
+#RUN /root/rowboat1/src/install/ros-packages-install.sh
 
 
 # Clean up installation files
