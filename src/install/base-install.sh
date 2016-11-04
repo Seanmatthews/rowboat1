@@ -18,25 +18,6 @@ ${PKG} cmake
 # http://answers.ros.org/question/53353/autocomplete-not-working-anymore/?comment=72208#comment-72208
 echo "export LC_ALL="C"" >> ~/.bashrc
 
-# OpenCV
-${PKG} libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
-${PKG} python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
-cd
-git clone https://github.com/Itseez/opencv.git
-git clone https://github.com/Itseez/opencv_contrib.git
-cd opencv_contrib
-git checkout 3.1.0
-cd ../opencv
-git checkout 3.1.0
-mkdir build
-cd build
-cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules ..
-make -j7
-sudo make install
-cd
-rm -rf opencv
-rm -rf opencv_contrib
-
 # ROS
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 sudo apt-key adv --keyserver hkp://pool.sks-keyservers.net --recv-key 0xB01FA116
