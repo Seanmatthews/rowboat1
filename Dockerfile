@@ -44,7 +44,7 @@ RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommend
     libcurlpp-dev \
     libcurlpp0
 
-RUN git clone https://github.com/FFmpeg/FFmpeg.git \
+RUN git clone https://github.com/FFmpeg/FFmpeg.git; \
     cd FFmpeg; git checkout tags/n3.1.3; \
     ./configure; make; make install; cd ..; rm -rf FFmpeg;
 
