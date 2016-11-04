@@ -91,4 +91,5 @@ COPY . /root/rowboat1
 # build everything
 RUN /root/rowboat1/src/install/ci-build.sh
 
+COPY .bash_profile /root/
 CMD ["/bin/bash"]
