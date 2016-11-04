@@ -20,10 +20,10 @@ RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommend
     i2c-tools \
     cmake \
     libusb-1.0-0-dev 
-RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
-    mono-gmcs \
-    mono-devel \
-    libmono-winforms2.0-cil 
+# RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
+#    mono-gmcs \
+#    mono-devel \
+#    libmono-winforms2.0-cil 
 RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
     autoconf \
     automake \
