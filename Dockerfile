@@ -43,6 +43,9 @@ RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommend
     zlib1g-dev \
     libcurlpp-dev \
     libcurlpp0
+RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
+    libopencv-dev \
+    python-opencv 
 
 RUN git clone https://github.com/FFmpeg/FFmpeg.git; \
     cd FFmpeg; git checkout tags/n3.1.3; \
