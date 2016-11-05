@@ -1,0 +1,7 @@
+#!/usr/bin/qemu-arm-static /bin/sh.real
+
+set -o errexit
+
+cp /bin/sh.real /bin/sh  
+/bin/sh "$@"
+cp /usr/bin/sh-shim /bin/sh  
