@@ -43,9 +43,6 @@ RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommend
     zlib1g-dev \
     libcurlpp-dev \
     libcurlpp0
-RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
-    libopencv-dev \
-    python-opencv 
 
 RUN git clone https://github.com/FFmpeg/FFmpeg.git; \
     cd FFmpeg; git checkout tags/n3.1.3; \
@@ -68,6 +65,15 @@ RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommend
      python-catkin-tools && \
      rosdep init
 
+RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
+    ros-indigo-diagnostic-aggregator \
+    ros-indigo-image-transport \
+    ros-indigo-teleop-twist-joy \
+    ros-indigo-roslint \
+    ros-indigo-camera-info-manager \
+    ros-indigo-razor_imu_9dof 
+
+RUN echo "source /root/rowboat1/src/rowboat/devel/setup.bash" >> /root/.bashrc
 
 #RUN /root/rowboat1/src/install/base-install.sh
 #RUN /root/rowboat1/src/install/ros-packages-install.sh
