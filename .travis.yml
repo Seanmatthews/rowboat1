@@ -11,7 +11,7 @@ env:
   global:
     - DOCKER_EMAIL: foo@rat.org
     - DOCKER_USERNAME: rowboat
-    - secure: K8IVz8EbP0ODzrlN6SoBjdbJRPGl6+dUF5YLG0T9kHRMbxRQlaPxiY/tkIOYhn770UKiYLXhb91149VjNa0ph/zxleMFbdjXZUgeFr9mjQeDMAi4X9xSv1dN1GFUYO3jz4yvOJqGc7qROY2pGaVsj+AOOweXVSI1F9jbn6SXaSsTUQB+3VC5vh+uNXKAEmctHB8JUlqO1ixg9V2uT3aLwu1hek6FaDFyluqMBawUbwzyxbMK1/LcnOU67ln4XCR/t+E06GTKVSJN95ZenGtCw+ML3mH7bNgGvmf5HtJo1MxnmG9f1FI6Qy7T1frGx41ImqlZ5jk5b+uVS0QGiYM68cGtCpwFjXxl7gzIMdayZFQoI0mzheAw+7Vd2eRiRMDCecVXEy7Oj9BxDKXHvmDdlkf9XHDOgnG4nNSHiUQ6a8eFdRnyscilGPQgHrvsOyKnvcizJ3hXDU9zxkHmQmbUfIvjy9gBJwlFDa4GFomiwct1qU0NAtZZ8QECWQOvXHAfvHbAT9bUP2eYU5LG6YZ7YPGsYpkooaWfrm1qsg3UA/n5KyDS3Yeq/6whpm91Jl70LbdT/TJegMX0sTf2R+538vEnmoaqsS1af6MCRhvYyY4KQH7PMvcIJrIhjEeKtHKrhiNYz0YThnIgE5vpaJ4uuJ0eYWhRwGqibPb/5qCucrI=
+    - secure: K8IVz8EbP0ODzrlN6SoBjdbJRPGl6+dUF5YLG0T9kHRMbxRQlaPxiY/tkIOYhn770UKiYLXhb91149VjNa0ph/zxleMFbdjXZUgeFr9mjQeDMAi4X9xSv1dN1GFUYO3jz4yvOJqGc7qROY2pGaVsj+AOOweXVSI1F9jbn6SXaSsTUQB+3VC5vh+uNXKAEmctHB8JUlqO1ixg9V2uT3aLwu1hek6FaDFyluqMBawUbwzyxbMK1/LcnOU67ln4XCR/t+E06GTKVSJN95ZenGtCw+ML3mH7bNgGvmf5HtJo1MxnmG9f1FI6Qy7T1frGx41ImqlZ5jk5b+uVS0QGiYM68cGtCpwFjXxl7gzIMdayZFQoI0mzheAw+7Vd2eRiRMDCecVXEy7Oj9BxDKXHvmDdlkf9XHDOgnG4nNSHiUQ6a8eFdRnyscilGPQgHrvsOyKnvcizJ3hXDU9zxkHmQmbUfIvjy9gBJwlFDa4GFomiwct1qU0NAtZZ8QECWQOvXHAfvHbAT9bUP2eYU5LG6YZ7YPGsYpkooaWfrm1qsg3UA/n5KyDS3Yeq/6whpm91Jl70LbdT/TJegMX0sTf2R+538vEnmoaqsS1af6MCRhvYyY4KQH7PMvcIJrIhjEeKtHKrhiNYz0YThnIgE5vpaJ4uuJ0eYWhRwGqibPb/5qCucrI=OB
 
 # turn off build email spam and turn slack on channel #github
 notifications:
@@ -42,7 +42,7 @@ before_script:
 
 # test code
 script:
-  - docker build -t rowboat/rowboat1 .
+  - docker build --rm=false -t rowboat/rowboat1 .
   - docker images
 
 # Show some status
