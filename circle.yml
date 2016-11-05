@@ -22,7 +22,7 @@ dependencies:
   override:
     - docker info
     - docker pull ubergarm/armhf-ubuntu:trusty
-    - docker run --name rowboat-test --rm -it -v /usr/bin/qemu-arm-static:/usr/bin/qemu-arm-static ubergarm/armhf-ubuntu:trusty sh -c 'apt-get update && apt-get install -y --no-install-recommendds mosquitto-clients'
+    - docker run --name rowboat-test --rm=false -it -v /usr/bin/qemu-arm-static:/usr/bin/qemu-arm-static ubergarm/armhf-ubuntu:trusty sh -c 'apt-get update && apt-get install -y --no-install-recommends mosquitto-clients'
     - docker commit rowboat-test rowboat/rowboat1
 
 test:
