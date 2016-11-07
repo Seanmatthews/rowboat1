@@ -29,13 +29,10 @@ before_install:
   - travis_retry sudo apt-get install -y --no-install-recommends qemu-user-static binfmt-support cowsay
   - PATH=$PATH:/usr/games
   - sudo update-binfmts --display qemu-arm
-  
 
 # build code
 install:
-   - travis_retry docker run --rm -it rowboat/rowboat1:latest uname -a
-#  - uname -a
-#  - travis_retry docker run --rm -it ubergarm/armhf-ubuntu:trusty uname -a
+   - travis_retry docker run --rm -it rowboat/rowboat1:latest "catkin build -w /root/rowboat1"
 
 # optional stuff here
 before_script:
@@ -43,28 +40,16 @@ before_script:
 
 # test code
 script: 
-  - catkin build -w rowboat1
-#  - docker build --rm=false -t rowboat/rowboat1 .
-#  - docker images
+  - catkin build -w /root/rowboat1
 
 # Show some status
 after_success:
+  - docker login -e=$DOCKER_EMAIL -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
+  - docker push rowboat/rowboat1:built
+  - docker search rowboat/rowboat1:built
   - cowsay -s Build of $TRAVIS_REPO_SLUG:$TRAVIS_BRANCH success!
 after_failure:
   - cowsay -d Build of $TRAVIS_REPO_SLUG:$TRAVIS_BRANCH fails...
-
-# save/deploy/push build artifacts
-before_deploy:
- - docker login -e=$DOCKER_EMAIL -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
-deploy:
-  provider: script
-  script:
-    - set -ev
-    - docker push rowboat/rowboat1:built
-  on:
-    branch: master
-after_deploy:
- - docker search rowboat/rowboat1:built
 
 # Jobs Done
 after_script:
