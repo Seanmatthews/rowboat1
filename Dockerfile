@@ -1,17 +1,16 @@
 FROM ubergarm/armhf-ubuntu:trusty
 
 ENV QEMU_EXECVE 1
+# Force armv6l
+# ENV QEMU_CPU arm1176
 
 COPY . /usr/bin
 
-# COPY sh-shim /usr/bin
-# COPY qemu-arm-static /usr/bin
-# COPY cross-build-start /usr/bin
-# COPY cross-build-end /usr/bin
+RUN [ "cross-build-start" ]
 
-
-RUN ["cross-build-start"]
+# Packages
 RUN apt-get update
-RUN ["cross-build-end"]
+
+RUN [ "cross-build-end" ]
 
 
