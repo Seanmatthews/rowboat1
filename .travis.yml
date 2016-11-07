@@ -54,15 +54,17 @@ after_failure:
   - cowsay -d Build of $TRAVIS_REPO_SLUG:$TRAVIS_BRANCH fails...
 
 # save/deploy/push build artifacts
-# before_deploy:
-#  - docker login -e=$DOCKER_EMAIL -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
-# deploy:
-#  provider: script
-#  script: ./src/install/ci-deploy.sh
-#  on:
-#    branch: master
-#after_deploy:
-#  - docker search rowboat/rowboat1
+before_deploy:
+ - docker login -e=$DOCKER_EMAIL -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
+deploy:
+  provider: script
+  script:
+    - set -ev
+    - docker push rowboat/rowboat1:built
+  on:
+    branch: master
+after_deploy:
+ - docker search rowboat/rowboat1:built
 
 # Jobs Done
 after_script:
