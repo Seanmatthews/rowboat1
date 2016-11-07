@@ -86,6 +86,7 @@ RUN bash -c "source /root/.bashrc && rosdep update"
 
 # Copy in git repo
 RUN pwd; ls
+COPY . /root/rowboat1
 # RUN cd; git clone https://github.com/Seanmatthews/rowboat1.git
 # COPY rowboat1 /root
 # COPY src /root/rowboat1
