@@ -52,25 +52,23 @@ RUN git clone https://github.com/FFmpeg/FFmpeg.git; \
 # http://answers.ros.org/question/53353/autocomplete-not-working-anymore/?comment=72208#comment-72208
 RUN echo "export LC_ALL="C"" >> ~/.bashrc
 
-# Various Specific Source Packages
+# ROS Packages
 RUN echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list
 RUN apt-key adv --keyserver hkp://pool.sks-keyservers.net --recv-key 0xB01FA116
 RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
-     ros-indigo-ros-base 
+     ros-indigo-ros-base \
      ros-indigo-roslint \
      ros-indigo-image-common \
      ros-indigo-diagnostics \
+     ros-indigo-diagnostic-aggregator \
+     ros-indigo-image-transport \
+     ros-indigo-teleop-twist-joy \
+     ros-indigo-camera-info-manager \
+     ros-indigo-razor-imu-9dof \
      python-rosinstall \
-     python-catkin-tools
-#     rosdep init
+     python-catkin-tools 
 
-#RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
-#    ros-indigo-diagnostic-aggregator \
-#    ros-indigo-image-transport \
-#    ros-indigo-teleop-twist-joy \
-#    ros-indigo-camera-info-manager \
-#    ros-indigo-razor_imu_9dof 
-
+RUN rosdep init
 #RUN echo "source /root/rowboat1/src/rowboat/devel/setup.bash" >> /root/.bashrc
 
 # Clean up installation files
