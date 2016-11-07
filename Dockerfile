@@ -85,13 +85,7 @@ RUN echo "source /root/rowboat1/src/rowboat/devel/setup.bash" >> /root/.bashrc
 RUN bash -c "source /root/.bashrc && rosdep update"
 
 # Copy in git repo
-RUN pwd; ls
 COPY . /root/rowboat1
-# RUN cd; git clone https://github.com/Seanmatthews/rowboat1.git
-# COPY rowboat1 /root
-# COPY src /root/rowboat1
-# COPY README.md /root/rowboat1
-# COPY .gitignore /root/rowboat1
 
 RUN [ "cross-build-end" ]
 
