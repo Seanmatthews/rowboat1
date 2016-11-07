@@ -80,8 +80,8 @@ USER root
 WORKDIR /root
 
 # configure ROS (it will give Warning as our UID is same as root, 0)
-RUN echo "source /opt/ros/indigo/setup.bash" >> /root/.bash_aliases
-RUN echo "source /root/rowboat1/src/rowboat/devel/setup.bash" >> /root/.bash_aliases
+RUN echo "source /opt/ros/indigo/setup.bash" >> /root/.bashrc
+RUN echo "source /root/rowboat1/src/rowboat/devel/setup.bash" >> /root/.bashrc
 RUN bash -c "source /root/.bashrc && rosdep update"
 
 # Copy in git repo
