@@ -32,7 +32,7 @@ before_install:
 
 # build code
 install:
-   - travis_retry docker run --rm -it rowboat/rowboat1:latest "catkin build -w rowboat1"
+   - travis_retry docker run --rm -it rowboat/rowboat1:latest catkin build -w rowboat1
 
 # optional stuff here
 before_script:
