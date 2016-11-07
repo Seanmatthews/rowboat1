@@ -69,7 +69,6 @@ RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommend
      python-catkin-tools 
 
 RUN rosdep init
-#RUN echo "source /root/rowboat1/src/rowboat/devel/setup.bash" >> /root/.bashrc
 
 # Clean up installation files
 RUN apt-get clean && \
@@ -80,11 +79,14 @@ USER root
 WORKDIR /root
 
 # configure ROS (it will give Warning as our UID is same as root, 0)
-#RUN echo "source /opt/ros/indigo/setup.bash" >> /root/.bash_aliases
-#RUN bash -c "source /root/.bashrc && rosdep update"
+RUN echo "source /opt/ros/indigo/setup.bash" >> /root/.bash_aliases
+RUN echo "source /root/rowboat1/src/rowboat/devel/setup.bash" >> /root/.bash_aliases
+RUN bash -c "source /root/.bashrc && rosdep update"
 
 # Copy in git repo
-COPY . /root/rowboat1
+COPY src /root/rowboat1
+COPY README.md /root/rowboat1
+COPY .gitignore /root/rowboat1
 
 RUN [ "cross-build-end" ]
 
