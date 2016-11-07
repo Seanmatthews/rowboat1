@@ -56,23 +56,23 @@ RUN echo "export LC_ALL="C"" >> ~/.bashrc
 RUN echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list
 RUN apt-key adv --keyserver hkp://pool.sks-keyservers.net --recv-key 0xB01FA116
 RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
-     ros-indigo-ros-base \
-     ros-indigo-roslint \
-     ros-indigo-image-common \
-     ros-indigo-diagnostics \
-     python-rosinstall \
-     python-catkin-tools && \
-     rosdep init
+     ros-indigo-ros-base 
+#     ros-indigo-roslint \
+#     ros-indigo-image-common \
+#     ros-indigo-diagnostics \
+#     python-rosinstall \
+#     python-catkin-tools
+#     rosdep init
 
-RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
-    ros-indigo-diagnostic-aggregator \
-    ros-indigo-image-transport \
-    ros-indigo-teleop-twist-joy \
-    ros-indigo-roslint \
-    ros-indigo-camera-info-manager \
-    ros-indigo-razor_imu_9dof 
+#RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
+#    ros-indigo-diagnostic-aggregator \
+#    ros-indigo-image-transport \
+#    ros-indigo-teleop-twist-joy \
+#    ros-indigo-roslint \
+#    ros-indigo-camera-info-manager \
+#    ros-indigo-razor_imu_9dof 
 
-RUN echo "source /root/rowboat1/src/rowboat/devel/setup.bash" >> /root/.bashrc
+#RUN echo "source /root/rowboat1/src/rowboat/devel/setup.bash" >> /root/.bashrc
 
 # Clean up installation files
 RUN apt-get clean && \
@@ -83,8 +83,8 @@ USER root
 WORKDIR /root
 
 # configure ROS (it will give Warning as our UID is same as root, 0)
-RUN echo "source /opt/ros/indigo/setup.bash" >> /root/.bash_aliases
-RUN bash -c "source /root/.bashrc && rosdep update"
+#RUN echo "source /opt/ros/indigo/setup.bash" >> /root/.bash_aliases
+#RUN bash -c "source /root/.bashrc && rosdep update"
 
 # Copy in git repo
 COPY . /root/rowboat1
