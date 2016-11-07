@@ -4,10 +4,11 @@ ENV QEMU_EXECVE 1
 # Force armv6l
 # ENV QEMU_CPU arm1176
 
-COPY qemu-arm-static /usr/bin
-COPY cross-build-start /usr/bin
-COPY cross-build-end /usr/bin
-COPY sh-shim /usr/bin
+COPY dockerutils/* /usr/bin
+#COPY qemu-arm-static /usr/bin
+#COPY cross-build-start /usr/bin
+#COPY cross-build-end /usr/bin
+#COPY sh-shim /usr/bin
 
 RUN [ "cross-build-start" ]
 
@@ -72,8 +73,7 @@ RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommend
 RUN rosdep init
 
 # Clean up installation files
-RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # switch to new user
 USER root
@@ -85,8 +85,9 @@ RUN echo "source /root/rowboat1/src/rowboat/devel/setup.bash" >> /root/.bashrc
 RUN bash -c "source /root/.bashrc && rosdep update"
 
 # Copy in git repo
-RUN git clone https://github.com/Seanmatthews/rowboat1.git
-COPY rowboat1 /root
+RUN pwd; ls
+# RUN cd; git clone https://github.com/Seanmatthews/rowboat1.git
+# COPY rowboat1 /root
 # COPY src /root/rowboat1
 # COPY README.md /root/rowboat1
 # COPY .gitignore /root/rowboat1
