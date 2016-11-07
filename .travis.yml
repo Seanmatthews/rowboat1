@@ -34,16 +34,17 @@ before_install:
 # build code
 install:
   - uname -a
-  - travis_retry docker run --rm -it ubergarm/armhf-ubuntu:trusty uname -a
+#  - travis_retry docker run --rm -it ubergarm/armhf-ubuntu:trusty uname -a
+   - travis_retry docker run --rm -it rowboat/rowboat1:latest uname -a
 
 # optional stuff here
 before_script:
   - cowsay -y System ready to build armhf Docker Images!
 
 # test code
-script:
-  - docker build --rm=false -t rowboat/rowboat1 .
-  - docker images
+script: catkin build -w rowboat1
+#  - docker build --rm=false -t rowboat/rowboat1 .
+#  - docker images
 
 # Show some status
 after_success:
@@ -52,15 +53,15 @@ after_failure:
   - cowsay -d Build of $TRAVIS_REPO_SLUG:$TRAVIS_BRANCH fails...
 
 # save/deploy/push build artifacts
-before_deploy:
-  - docker login -e=$DOCKER_EMAIL -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
-deploy:
-  provider: script
-  script: ./src/install/ci-deploy.sh
-  on:
-    branch: master
-after_deploy:
-  - docker search rowboat/rowboat1
+# before_deploy:
+#  - docker login -e=$DOCKER_EMAIL -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
+# deploy:
+#  provider: script
+#  script: ./src/install/ci-deploy.sh
+#  on:
+#    branch: master
+#after_deploy:
+#  - docker search rowboat/rowboat1
 
 # Jobs Done
 after_script:
