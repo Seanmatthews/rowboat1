@@ -57,18 +57,17 @@ RUN echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc
 RUN apt-key adv --keyserver hkp://pool.sks-keyservers.net --recv-key 0xB01FA116
 RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
      ros-indigo-ros-base 
-#     ros-indigo-roslint \
-#     ros-indigo-image-common \
-#     ros-indigo-diagnostics \
-#     python-rosinstall \
-#     python-catkin-tools
+     ros-indigo-roslint \
+     ros-indigo-image-common \
+     ros-indigo-diagnostics \
+     python-rosinstall \
+     python-catkin-tools
 #     rosdep init
 
 #RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
 #    ros-indigo-diagnostic-aggregator \
 #    ros-indigo-image-transport \
 #    ros-indigo-teleop-twist-joy \
-#    ros-indigo-roslint \
 #    ros-indigo-camera-info-manager \
 #    ros-indigo-razor_imu_9dof 
 
