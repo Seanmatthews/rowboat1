@@ -4,7 +4,7 @@ ENV QEMU_EXECVE 1
 # Force armv6l
 # ENV QEMU_CPU arm1176
 
-COPY dockerutils/* /usr/bin
+COPY dockerutils/* /usr/bin/
 #COPY qemu-arm-static /usr/bin
 #COPY cross-build-start /usr/bin
 #COPY cross-build-end /usr/bin
