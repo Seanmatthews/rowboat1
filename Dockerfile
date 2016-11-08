@@ -67,6 +67,7 @@ RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommend
      ros-indigo-teleop-twist-joy \
      ros-indigo-camera-info-manager \
      ros-indigo-razor-imu-9dof \
+     ros-indigo-vision-opencv \
      python-rosinstall \
      python-catkin-tools 
 
