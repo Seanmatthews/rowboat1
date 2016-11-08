@@ -33,7 +33,6 @@ before_install:
 # build code
 install:
   - docker pull rowboat/rowboat1-base-image
-  - docker run -d -it rowboat/rowboat1-base-image /bin/more /root/.bashrc
   - docker run -it --rm -w /root/rowboat1 rowboat/rowboat1-base-image /bin/bash -c "source /opt/ros/indigo/setup.bash; catkin build"
 
 # optional stuff here
@@ -41,8 +40,7 @@ before_script:
   - cowsay -y System ready to build armhf Docker Images!
 
 # test code
-script: 
-  - ls
+#script: 
 #  - catkin build -w /root/rowboat1
 
 # Show some status
