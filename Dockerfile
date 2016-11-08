@@ -42,7 +42,8 @@ RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommend
     texinfo \
     zlib1g-dev \
     libcurlpp-dev \
-    libcurlpp0
+    libcurlpp0 \
+    libjsoncpp-dev
 
 # FFmpeg
 RUN git clone https://github.com/FFmpeg/FFmpeg.git; \
