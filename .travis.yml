@@ -32,9 +32,9 @@ before_install:
 
 # build code
 install:
-  - docker pull rowboat/rowboat1:latest
-  - docker run -d -it rowboat/rowboat1:latest /bin/more /root/.bashrc
-  - docker run -it --rm -w /root/rowboat1 rowboat/rowboat1:latest /bin/bash -c "source /opt/ros/indigo/setup.bash; catkin build"
+  - docker pull rowboat/rowboat1-base-image
+  - docker run -d -it rowboat/rowboat1-base-image /bin/more /root/.bashrc
+  - docker run -it --rm -w /root/rowboat1 rowboat/rowboat1-base-image /bin/bash -c "source /opt/ros/indigo/setup.bash; catkin build"
 
 # optional stuff here
 before_script:
@@ -48,8 +48,8 @@ script:
 # Show some status
 after_success:
   - docker login -e=$DOCKER_EMAIL -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
-  - docker push rowboat/odroid_build:$TRAVIS_BRANCH$TRAVIS_BUILD_NUMBER
-  - docker search rowboat/odroid_build:$TRAVIS_BRANCH$TRAVIS_BUILD_NUMBER
+  - docker push rowboat/rowboat1-tested-build:$TRAVIS_BRANCH$TRAVIS_BUILD_NUMBER
+  - docker search rowboat/rowboat1-tested-build:$TRAVIS_BRANCH$TRAVIS_BUILD_NUMBER
   - cowsay -s Build of $TRAVIS_REPO_SLUG:$TRAVIS_BRANCH success!
 after_failure:
   - cowsay -d Build of $TRAVIS_REPO_SLUG:$TRAVIS_BRANCH fails...
