@@ -34,7 +34,7 @@ before_install:
 install:
   - docker pull rowboat/rowboat1:latest
   - docker run -d -it rowboat/rowboat1:latest /bin/bash -c "source /root/.bashrc"
-  - docker run -it --rm -w /root/rowboat1 rowboat/rowboat1:latestc catkin build
+  - docker run -it --rm -w /root/rowboat1 rowboat/rowboat1:latest catkin build
 
 
 # optional stuff here
