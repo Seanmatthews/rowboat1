@@ -33,7 +33,7 @@ before_install:
 # build code
 install:
   - docker pull rowboat/rowboat-base-images:1.0
-  - docker run -it --rm -v $TRAVIS_BUILD_DIR:/tmp/rowboat1 rowboat/rowboat-base-images:1.0 /bin/bash -c "source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -w /root/rowboat1"
+  - docker run -it --rm -v $TRAVIS_BUILD_DIR:/tmp/rowboat1 rowboat/rowboat-base-images:1.0 /bin/bash -c "source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -v -w /root/rowboat1"
 
 # optional stuff here
 before_script:
