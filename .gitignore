@@ -1,3 +1,4 @@
+.dockercreds
 devel/
 build/
 ~/rowboat1/src/*/devel
