@@ -19,15 +19,13 @@ dependencies:
 
 test:
   override:
-    - docker run --name container -it -v $HOME:/tmp rowboat/rowboat-base-images:1.0 /bin/bash -c "source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; ls; ls /root/rowboat1/; catkin build -w /root/rowboat1 --no-status --no-notify"
-#    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" container)" -- bash -c more .bashrc
-#    - docker run --name newCont -it -v $HOME:/tmp/rowboat1 rowboat/rowboat-base-images:1.0 
+    - docker run --name container -it -v $HOME:/tmp rowboat/rowboat-base-images:1.0 /bin/bash -c "source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -w /root/rowboat1 --no-status --no-notify"
 
-#deployment:
-#  hub:
-#    branch: master
-#    commands:
-#      - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-#      - docker tag newCont rowboat/rowboat1-tested-build:$TRAVIS_BRANCH$TRAVIS_BUILD_NUMBER
-#      - docker push rowboat/rowboat1-tested-build
-#      - docker search rowboat/rowboat1-tested-build:$TRAVIS_BRANCH$TRAVIS_BUILD_NUMBER
+deployment:
+  hub:
+    branch: master
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      - docker tag newCont rowboat/rowboat1-tested-build:$TRAVIS_BRANCH$TRAVIS_BUILD_NUMBER
+      - docker push rowboat/rowboat1-tested-build
+      - docker search rowboat/rowboat1-tested-build:$TRAVIS_BRANCH$TRAVIS_BUILD_NUMBER
