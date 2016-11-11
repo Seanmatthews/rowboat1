@@ -15,11 +15,11 @@ dependencies:
     - openssl aes-256-cbc -d -in .dockersecret -k $KEY >> ~/.circlerc
   override:
     - docker info
-    - docker pull rowboat/rowboat-base-images:1.0
+#    - docker pull rowboat/rowboat-base-images:1.0
 
 test:
   override:
-    - docker run --name container -d -it -v $HOME:/tmp rowboat/rowboat-base-images:1.0 /bin/bash -c "source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -w /root/rowboat1 --no-notify --no-status":
+    - docker run --name container --rm=false -it -v $HOME:/tmp rowboat/rowboat-base-images:1.0 /bin/bash -c "source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -w /root/rowboat1 --no-notify --no-status":
         timeout: 1200
 
 deployment:
