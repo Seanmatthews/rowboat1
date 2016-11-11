@@ -24,9 +24,9 @@ dependencies:
 
 test:
   override:
-    - ls
-    - docker run --name container -it rowboat/rowboat-base-images:1.0 pwd; ls
-    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" container)" -- bash -c more .bashrc
+    - docker run --rm -it ubergarm.armhf-ubuntu:trusty uname -a
+#    - docker run --name container -it rowboat/rowboat-base-images:1.0 pwd; ls
+#    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" container)" -- bash -c more .bashrc
 #    - docker run --name newCont -it -v $HOME:/tmp/rowboat1 rowboat/rowboat-base-images:1.0 source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -w /root/rowboat1
 
 #deployment:
