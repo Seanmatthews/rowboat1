@@ -24,8 +24,10 @@ dependencies:
 
 test:
   override:
-    - echo $HOME
-    - docker run --name newCont -it -v ~/:/tmp/rowboat1 rowboat/rowboat-base-images:1.0 source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -w /root/rowboat1
+    - ls
+    - docker run --name container --rm -i -t ubuntu bash
+    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" $MY_CONTAINER_NAME)" -- bash -c more .bashrc
+#    - docker run --name newCont -it -v $HOME:/tmp/rowboat1 rowboat/rowboat-base-images:1.0 source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -w /root/rowboat1
 
 #deployment:
 #  hub:
