@@ -24,7 +24,8 @@ dependencies:
 
 test:
   override:
-    - docker run --name newCont -it -v $HOME:/tmp/rowboat1 rowboat/rowboat-base-images:1.0 source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -w /root/rowboat1
+    - echo $HOME
+    - docker run --name newCont -it -v ~/:/tmp/rowboat1 rowboat/rowboat-base-images:1.0 source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -w /root/rowboat1
 
 #deployment:
 #  hub:
