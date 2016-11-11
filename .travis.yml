@@ -40,7 +40,7 @@ before_script:
 
 # test code
 script: 
-  - docker run --name newCont -it -v $TRAVIS_BUILD_DIR:/tmp/rowboat1 rowboat/rowboat-base-images:1.0 /bin/bash -c "source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -v -i --no-jobserver --no-status --no-notify -w /root/rowboat1"
+  - docker run --name newCont -it -v $TRAVIS_BUILD_DIR:/tmp/rowboat1 rowboat/rowboat-base-images:1.0 /bin/bash -c "source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -v -i --force-cmake --no-jobserver --no-status --no-notify -w /root/rowboat1"
 
 # Show some status
 after_success:
