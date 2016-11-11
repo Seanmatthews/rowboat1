@@ -13,8 +13,11 @@ checkout:
     - git submodule update --init
 
 dependencies:
-#  pre:
-#    - sudo apt-get update
+  pre:
+    - sudo apt-get update
+    - sudo cp ./qemu-arm-static /usr/bin/
+    - sudo cp ./qemu-arm /usr/share/binfmts/
+    - qemu-arm-static -version
 #    - sudo apt-get install -y --no-install-recommends qemu-user-static binfmt-support
 #    - sudo update-binfmts --display qemu-arm
   override:
@@ -24,7 +27,7 @@ dependencies:
 
 test:
   override:
-    - docker run -it ubergarm/armhf-ubuntu:trusty /bin/uname -a
+    - docker run -it --name cont -v /usr/bin/qemu-arm-static:/usr/bin/qemu-arm-static ubergarm/armhf-ubuntu:trusty sh -c '/bin/uname -a'
 #    - docker run --name container -it rowboat/rowboat-base-images:1.0 pwd; ls
 #    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" container)" -- bash -c more .bashrc
 #    - docker run --name newCont -it -v $HOME:/tmp/rowboat1 rowboat/rowboat-base-images:1.0 source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -w /root/rowboat1
