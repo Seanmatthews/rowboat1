@@ -1,7 +1,4 @@
-rowboat1
-===
-
-[![Travis CI](https://travis-ci.org/Seanmatthews/rowboat1.svg)](https://travis-ci.org/Seanmatthews/rowboat1/)
+# rowboat1 [![Circle CI](https://circleci.com/gh/Seanmatthews/rowboat1.svg?style=svg)](https://circleci.com/gh/Seanmatthews/rowboat1)
 
 This is the repository for Brooklyn's [Diamond Reef Explorer's](http://www.diamondreefexplorers.org/) autonomous underwater vehicle, Rowboat-1. The project is currently in its planning and design phase. If you'd like help out, no matter what your skills, join our meetup group at http://www.meetup.com/Tech-Tinkerers-NYC. 
 
