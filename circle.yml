@@ -20,13 +20,12 @@ dependencies:
 test:
   override:
     - docker run --name container -it -v $HOME:/tmp rowboat/rowboat-base-images:1.0 /bin/bash -c "source /opt/ros/indigo/setup.bash; cp -R /tmp/rowboat1 .; catkin build -w /root/rowboat1 --no-notify --no-status"
-        timeout: 1200
+#        timeout: 1200
 
 deployment:
   hub:
     branch: master
     commands:
-#      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker tag newCont rowboat/rowboat1-tested-build:$TRAVIS_BRANCH$TRAVIS_BUILD_NUMBER
       - docker push rowboat/rowboat1-tested-build
       - docker search rowboat/rowboat1-tested-build:$TRAVIS_BRANCH$TRAVIS_BUILD_NUMBER
