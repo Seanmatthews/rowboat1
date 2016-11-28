@@ -1,0 +1,15 @@
+<launch ns="rowboat1">
+  <node name="logger" pkg="logger" type="logger" >
+
+    <!-- Subscription Topics -->
+    <param name="goproTopic" value="gopro_hero/image" />
+    <param name="navCamTopic" value="pointgrey_camera_driver/image" />
+    <param name="thrustCmdTopic" value="pololu_maestro/controlPWMList" />
+    <param name="odomTopic" value="tf/odom" />
+
+    <!-- Tuning Params -->
+    <param name="storageCheckInterval" value=10 />
+    
+
+  </node>
+</launch>
